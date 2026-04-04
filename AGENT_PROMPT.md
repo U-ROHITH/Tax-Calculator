@@ -438,7 +438,7 @@ No emojis. Lucide icons only. After every milestone: commit + push.
 
 ---
 
-### 🔲 M23 — Multi-Year Loss Carry-Forward Tracker (app/carryforward page)
+### ✅ M23 — Multi-Year Loss Carry-Forward Tracker (app/carryforward page) — DONE **Pushed ✓**
 
 **Route:** `/carryforward`  
 **Purpose:** Track losses from prior years that reduce this year's tax — something the app is currently stateless about.
