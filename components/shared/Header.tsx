@@ -10,6 +10,7 @@ const NAV_LINKS = [
   { href: '/us', label: 'United States' },
   { href: '/uk', label: 'United Kingdom' },
   { href: '/compare', label: 'Compare' },
+  { href: '/plan', label: 'Tax Planning' },
 ];
 
 export default function Header() {
@@ -75,7 +76,7 @@ export default function Header() {
           <nav className="flex md:hidden items-center gap-0.5">
             {NAV_LINKS.map(({ href, label }) => {
               const isActive = pathname === href || pathname.startsWith(href + '/');
-              const short = label === 'United States' ? 'US' : label === 'United Kingdom' ? 'UK' : label;
+              const short = label === 'United States' ? 'US' : label === 'United Kingdom' ? 'UK' : label === 'Tax Planning' ? 'Plan' : label;
               return (
                 <Link
                   key={href}
