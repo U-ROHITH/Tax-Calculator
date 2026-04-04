@@ -402,7 +402,10 @@ No emojis. Lucide icons only. After every milestone: commit + push.
 
 ---
 
-### 🔲 M22 — What-If Tax Planning Tools (app/plan page)
+### ✅ M22 — DONE
+- **Pushed ✓**
+
+### ~~🔲 M22 — What-If Tax Planning Tools (app/plan page)~~
 
 **Route:** `/plan`  
 **Purpose:** Let user model future decisions before making them — closest we can get to a CA's prospective planning.
