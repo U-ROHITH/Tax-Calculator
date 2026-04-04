@@ -254,3 +254,21 @@ export interface TaxResult {
   amtLiability?: number;    // AMT if applicable
   credits?: TaxCredit[];    // list of credits applied
 }
+
+export interface CarryForwardLoss {
+  id: string;
+  type: 'business' | 'ltcg' | 'stcg' | 'house_property' | 'depreciation';
+  yearOfLoss: string;      // "FY 2022-23"
+  originalAmount: number;
+  remainingBalance: number;
+  expiryFY: string;        // "FY 2030-31" or "Never" for depreciation
+  setOffThisYear?: number; // computed
+}
+
+export interface CarryForwardSummary {
+  totalBFLoss: number;
+  totalSetOffThisYear: number;
+  taxSavedThisYear: number;
+  lossesExpiringSoon: CarryForwardLoss[]; // expiring within 2 years
+  updatedLosses: CarryForwardLoss[];
+}
