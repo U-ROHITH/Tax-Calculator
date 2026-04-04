@@ -536,6 +536,66 @@ export interface CarryForwardLoss {
 
 ---
 
+---
+
+## v4 — Closing the Remaining Gaps (AI + Document Parsing + Compliance)
+
+Target: cover legal interpretation, notice handling, document review, GST/TDS.
+Anthropic SDK installed. Use model: `claude-haiku-4-5-20251001` for all AI routes.
+API key: `process.env.ANTHROPIC_API_KEY` — never hardcode.
+
+---
+
+### 🔲 M25 — Engine Additions: Section 50C, 56(2)(x), ESOP, Clubbing, Foreign Tax Credit
+Expand `engine/india.ts` and `engine/types.ts`.
+- Section 50C: if property sale < stamp duty value → deemed CG on stamp duty value
+- Section 56(2)(x): gifts > ₹50K from non-relatives → taxable as other sources
+- ESOP perquisite: (FMV on exercise date - exercise price) × shares → taxable as salary
+- ESOP subsequent CG: (sale price - FMV on exercise) → STCG/LTCG depending on holding
+- Clubbing of income: minor child income (₹1,500 exemption) added to parent
+- Foreign tax credit (simplified): foreign tax paid credited against Indian tax on same income
+- Section 80-IAC: startup tax holiday (100% deduction, 3 of first 10 years)
+Add tests for each. Build + push.
+
+### 🔲 M26 — AI Tax Assistant (`/assistant` page + `app/api/tax-assistant/route.ts`)
+Natural language tax queries answered by Claude. Closes the "legal interpretation" gap.
+- API route: streams response from claude-haiku-4-5-20251001
+- System prompt: expert Indian/US/UK tax consultant, cites sections, no hallucination
+- UI: chat interface, suggested questions, country selector, disclaimer
+Build + push.
+
+### 🔲 M27 — Form 16 / AIS PDF Upload + Auto-Parse (`/upload` page)
+Closes the "document review" gap.
+- Upload Form 16 PDF → extract: gross salary, TDS, HRA, standard deduction, 80C investments
+- Upload AIS PDF → extract: interest income, dividends, property transactions
+- Auto-fill the India calculator with extracted values
+- Show confidence indicators on extracted fields
+- Use pdf-parse (already installed) for text extraction + regex patterns
+Build + push.
+
+### 🔲 M28 — Notice Response Generator (`/notice` page + `app/api/notice-draft/route.ts`)
+Closes the "notice handling" gap — generates structured response drafts.
+- User describes notice type (143(1), 143(2), 148, 245, 271) + their situation
+- Claude generates: what the notice means, what action is needed, draft reply letter
+- Include: proper legal language, relevant sections, 30-day response reminder
+Build + push.
+
+### 🔲 M29 — GST Calculator (`/gst` page) + TDS Calculator (`/tds` page)
+Closes the "GST/TDS compliance" gap — pure formula work.
+**GST:**
+- Input: transaction value, supply type (goods/services), GST rate (0/5/12/18/28%)
+- Intra-state → CGST + SGST. Inter-state → IGST
+- Reverse charge applicability
+- Composition scheme threshold (₹1.5Cr turnover)
+- GST on rent, professional fees, imports (IGST)
+**TDS:**
+- Section 194A (FD interest > ₹40K), 194B (lottery), 194C (contractor), 194H (commission),
+  194I (rent > ₹2.4L/yr), 194J (professional fees > ₹30K), 192 (salary TDS)
+- Show: applicable TDS section, rate, threshold, deductee's PAN impact (20% if no PAN)
+Build + push.
+
+---
+
 ## Commit Convention
 
 ```
