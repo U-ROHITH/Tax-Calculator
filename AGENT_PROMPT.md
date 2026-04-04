@@ -115,7 +115,12 @@ git push origin master
 
 ## What Still Needs To Be Done
 
-### 🔲 MILESTONE 10 — Fix Build TypeScript Errors
+### ✅ MILESTONE 10 — Fix Build TypeScript Errors
+- Fixed Recharts `formatter` type errors in `BracketWaterfall.tsx`, `TaxBreakdownChart.tsx`, `CompareCalculator.tsx`
+- Used `(value: unknown) => ...` pattern for all Recharts formatters
+- **Pushed to GitHub ✓**
+
+### ✅ MILESTONE 11 — SEO + Sitemap
 `npm run build` currently fails with Recharts Tooltip/Label formatter type errors in `CompareCalculator.tsx`. Fix them and get a clean build.
 
 Errors to fix:
@@ -132,16 +137,31 @@ After fixing, run `npm run build` until it exits 0. Then push to GitHub.
 - Open Graph images in `public/og/`
 - Run `npm run build` cleanly with 0 errors
 
-### 🔲 MILESTONE 11 — SEO & sitemap
-- JSON-LD FAQPage structured data in each country page
-- `next-sitemap.config.js` + `robots.txt`
-- Verify `npm run build` exits 0 → push to GitHub
+### ✅ MILESTONE 11 — SEO + Sitemap
+- JSON-LD FAQPage structured data in `/in`, `/us`, `/uk` pages (3 questions each)
+- `next-sitemap.config.js` — auto-generates `sitemap.xml` + `robots.txt` on build
+- All routes: `/`, `/in`, `/us`, `/uk`, `/compare` building as static pages
+- **Pushed to GitHub ✓**
 
-### 🔲 MILESTONE 12 — Final Polish & Deploy
-- Dark mode toggle in Header
-- Framer Motion result card animations
-- `npm run test` — all 104 tests pass
-- `npm run build` clean → push to GitHub → deploy Vercel
+### ✅ MILESTONE 12 — Final Polish — COMPLETE
+- Dark mode toggle in Header (persists in localStorage, respects OS preference)
+- Framer Motion: results dashboard fades+slides in, summary cards stagger in with delay
+- **104/104 tests pass**
+- **Clean production build**
+- **Pushed to GitHub ✓**
+
+---
+
+## 🎉 PROJECT COMPLETE
+
+All milestones done. The app is fully built and pushed.
+To deploy: connect `https://github.com/U-ROHITH/Tax-Calculator` to Vercel (free tier), set `NEXT_PUBLIC_SITE_URL` env var, it will auto-deploy on every push.
+
+Optional next steps (Phase 2 from SDD §15):
+- Add Google AdSense publisher ID via `NEXT_PUBLIC_ADSENSE_ID` env var
+- Add affiliate links to real programs (Groww, Zerodha, PolicyBazaar)
+- Add 10 more US states
+- Add capital gains calculator
 
 ---
 
