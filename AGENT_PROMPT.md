@@ -282,7 +282,51 @@ Success: #16A34A | Warning: #D97706 | Danger: #DC2626
 
 ## What To Build Next (v2 — CA Replacement)
 
-### 🔲 M13 — Design System Rebuild
+### ✅ M13 — Design System Rebuild (DONE)
+- `globals.css`: full CSS token system (light/dark), `grid-pattern`, `.num` class, smooth transitions
+- `Header`: BarChart3 logo, active underline nav, Sun/Moon dark mode toggle, mobile-responsive
+- `Footer`: minimal professional, disclaimer, logo
+- `layout.tsx`: Inter font, metadata, AdSense hook
+- `page.tsx`: hero with grid-pattern, stats bar, country cards with left-border accent, no emojis
+- **Pushed ✓**
+
+### ✅ M14 — India Engine v2 (DONE)
+- All income heads: salary, house property, business (44AD/44ADA/regular), capital gains, other sources
+- All Chapter VI-A deductions (80C through 80U, 80TTB for seniors)
+- Capital gains: equity STCG 20%, LTCG 12.5% above ₹1.25L, debt at slab, property with CII indexation
+- ITR form recommendation, advance tax schedule, TDS reconciliation
+- **Tests: 137/137 pass ✓ | Pushed ✓**
+
+### ✅ M15 — US Engine v2 (DONE)
+- All 15 states + DC with flat/progressive brackets
+- Capital gains (LTCG at preferential rates), NIIT 3.8%, AMT (simplified)
+- Credits: Child Tax Credit, EITC, Dependent Care, Education (AOTC/LLC), Saver's Credit
+- QBI deduction (Section 199A), Social Security taxation
+- **Tests included | Pushed ✓**
+
+### ✅ M16 — UK Engine v2 (DONE)
+- Capital gains: residential property 18%/28%, other 10%/20%, £3K annual exempt
+- Marriage Allowance, Child Benefit High Income Charge
+- Extended income: self-employment, rental, savings interest
+- **Tests included | Pushed ✓**
+
+### ✅ M17-M19 — Comprehensive Form UIs (DONE)
+- **IndiaForm v2**: 8 sections — Regime/Age, Salary (with HRA), House Property, Business, Capital Gains (7 types), Other Sources, Chapter VI-A (all deductions), TDS/Advance Tax
+- **USForm v2**: 5 sections — Filing Info, Additional Income, Deductions, Above-the-line Adjustments, Credits
+- **UKForm v2**: 5 sections — Employment, 60% trap warning, Pension, Additional Income, Capital Gains, Reliefs
+- All forms: collapsible sections, `Field` + `SegmentControl` components, professional dense inputs, zero emojis
+- **Pushed ✓**
+
+### ✅ M20 — Results Panel v2 (DONE)
+- Section-based collapsible layout with Lucide icons
+- Full tax computation table (GTI → deductions → taxable income → components)
+- Advance Tax Schedule table (India)
+- ITR form recommendation + tax still payable (India)
+- PDF download button
+- Animated KPI cards with Framer Motion stagger
+- **Pushed ✓**
+
+### 🔲 M21 — Compare Page v2 + Final QA
 Replace all existing UI components with the MNC-grade design system above.
 - New `app/globals.css` (token-based, light+dark)
 - New `components/ui/` primitives (Input, Select, Card, Badge, Tabs, Button, Table)
