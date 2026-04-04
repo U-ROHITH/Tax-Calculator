@@ -17,20 +17,21 @@ Build **TaxCalc Global** — a free, client-side, multi-country income tax calcu
 
 ## GitHub Setup
 
-```bash
-# Remote is already set. To push you need the GitHub token — ask the repo owner.
-# Set it once in your shell session then push:
-#   git remote set-url origin https://<TOKEN>@github.com/U-ROHITH/Tax-Calculator.git
-#   git push origin master
+The remote is already configured. To push, set the token in your shell (never write it to a file):
 
-# Commit after every milestone:
+```bash
+# One-time setup for the session:
+export GH_TOKEN="<token from project owner>"
+git remote set-url origin "https://${GH_TOKEN}@github.com/U-ROHITH/Tax-Calculator.git"
+
+# After every milestone:
 git add -A
 git commit -m "milestone: <description>"
 git push origin master
 ```
 
 **Repo:** `https://github.com/U-ROHITH/Tax-Calculator`
-**Token:** stored in the project owner's environment — do not hard-code it in any file.
+**IMPORTANT:** Never write the token into any file — GitHub will block the push via secret scanning.
 
 ---
 
