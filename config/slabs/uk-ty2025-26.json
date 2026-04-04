@@ -1,0 +1,42 @@
+{
+  "year": "TY 2025-26",
+  "personalAllowance": 12570,
+  "personalAllowanceTaperThreshold": 100000,
+  "personalAllowanceTaperRate": 0.5,
+  "bands": {
+    "england_wales_ni": [
+      { "min": 0, "max": 12570, "rate": 0, "label": "Personal Allowance" },
+      { "min": 12570, "max": 50270, "rate": 0.20, "label": "Basic rate" },
+      { "min": 50270, "max": 125140, "rate": 0.40, "label": "Higher rate" },
+      { "min": 125140, "max": null, "rate": 0.45, "label": "Additional rate" }
+    ],
+    "scotland": [
+      { "min": 0, "max": 12570, "rate": 0, "label": "Personal Allowance" },
+      { "min": 12570, "max": 14876, "rate": 0.19, "label": "Starter rate" },
+      { "min": 14876, "max": 26561, "rate": 0.20, "label": "Basic rate" },
+      { "min": 26561, "max": 43662, "rate": 0.21, "label": "Intermediate rate" },
+      { "min": 43662, "max": 75000, "rate": 0.42, "label": "Higher rate" },
+      { "min": 75000, "max": 125140, "rate": 0.45, "label": "Advanced rate" },
+      { "min": 125140, "max": null, "rate": 0.48, "label": "Top rate" }
+    ]
+  },
+  "nationalInsurance": {
+    "primaryThreshold": 12570,
+    "upperEarningsLimit": 50270,
+    "mainRate": 0.08,
+    "upperRate": 0.02
+  },
+  "dividendAllowance": 500,
+  "dividendRates": {
+    "basic": 0.0875,
+    "higher": 0.3375,
+    "additional": 0.3935
+  },
+  "studentLoan": {
+    "plan1": { "threshold": 24990, "rate": 0.09 },
+    "plan2": { "threshold": 27295, "rate": 0.09 },
+    "plan4": { "threshold": 31395, "rate": 0.09 },
+    "plan5": { "threshold": 25000, "rate": 0.09 },
+    "postgrad": { "threshold": 21000, "rate": 0.06 }
+  }
+}

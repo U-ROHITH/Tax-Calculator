@@ -1,0 +1,53 @@
+{
+  "india": [
+    {
+      "id": "groww-elss",
+      "trigger": "80C_unused",
+      "title": "Save up to ₹46,800 with ELSS funds",
+      "description": "Invest in ELSS mutual funds to claim full ₹1.5L deduction under Section 80C",
+      "cta": "Explore ELSS on Groww",
+      "url": "https://groww.in/mutual-funds/category/elss-tax-saving-mutual-funds?utm_source=taxcalc&utm_medium=affiliate",
+      "color": "#00D09C"
+    },
+    {
+      "id": "zerodha-nps",
+      "trigger": "NPS_unused",
+      "title": "Extra ₹50K deduction with NPS",
+      "description": "Claim additional ₹50,000 deduction under Section 80CCD(1B) via NPS",
+      "cta": "Open NPS on Zerodha",
+      "url": "https://zerodha.com/nps/?utm_source=taxcalc&utm_medium=affiliate",
+      "color": "#387ED1"
+    },
+    {
+      "id": "policybazaar-health",
+      "trigger": "80D_unused",
+      "title": "Compare health insurance for 80D",
+      "description": "Save up to ₹25,000 on taxes with health insurance deduction under 80D",
+      "cta": "Compare on PolicyBazaar",
+      "url": "https://www.policybazaar.com/health-insurance/?utm_source=taxcalc&utm_medium=affiliate",
+      "color": "#FF6B35"
+    }
+  ],
+  "us": [
+    {
+      "id": "fidelity-401k",
+      "trigger": "no_401k",
+      "title": "Reduce taxable income with a 401(k)",
+      "description": "Contribute up to $23,500 to your 401(k) and cut your federal tax bill",
+      "cta": "Open 401(k) at Fidelity",
+      "url": "https://www.fidelity.com/retirement-ira/401k-rollover-ira?utm_source=taxcalc&utm_medium=affiliate",
+      "color": "#006747"
+    }
+  ],
+  "uk": [
+    {
+      "id": "pensionbee",
+      "trigger": "no_pension",
+      "title": "Boost your pension, cut your tax",
+      "description": "Pension contributions reduce your taxable income — save up to 45%",
+      "cta": "Start pension with PensionBee",
+      "url": "https://www.pensionbee.com/?utm_source=taxcalc&utm_medium=affiliate",
+      "color": "#EA5B10"
+    }
+  ]
+}

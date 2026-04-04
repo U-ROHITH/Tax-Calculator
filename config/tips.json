@@ -1,0 +1,75 @@
+{
+  "india": [
+    {
+      "id": "in_80c",
+      "title": "Maximize Section 80C",
+      "description": "Invest ₹1.5L in ELSS, PPF, or NPS to claim full 80C deduction in old regime",
+      "country": "IN",
+      "regime": "old",
+      "trigger": "80C_below_max"
+    },
+    {
+      "id": "in_nps",
+      "title": "Additional NPS deduction",
+      "description": "Claim extra ₹50,000 under Section 80CCD(1B) through National Pension System",
+      "country": "IN",
+      "regime": "old",
+      "trigger": "nps_unused"
+    },
+    {
+      "id": "in_new_regime",
+      "title": "New Regime advantage",
+      "description": "Income up to ₹12.75L is effectively tax-free under new regime with 87A rebate",
+      "country": "IN",
+      "regime": "new",
+      "trigger": "income_below_1275000"
+    },
+    {
+      "id": "in_hra",
+      "title": "Claim HRA exemption",
+      "description": "If you pay rent, claim HRA exemption to significantly reduce taxable income",
+      "country": "IN",
+      "regime": "old",
+      "trigger": "hra_not_claimed"
+    }
+  ],
+  "us": [
+    {
+      "id": "us_401k",
+      "title": "Maximize 401(k) contributions",
+      "description": "Contribute up to $23,500 pre-tax to 401(k) to reduce AGI and federal tax",
+      "country": "US",
+      "trigger": "always"
+    },
+    {
+      "id": "us_hsa",
+      "title": "Use an HSA for triple tax benefit",
+      "description": "HSA contributions are pre-tax, grow tax-free, and withdrawals are tax-free for medical expenses",
+      "country": "US",
+      "trigger": "always"
+    }
+  ],
+  "uk": [
+    {
+      "id": "uk_pension",
+      "title": "Pension contributions save tax",
+      "description": "Each £1 in pension saves 20-45p in tax depending on your rate band",
+      "country": "UK",
+      "trigger": "no_pension"
+    },
+    {
+      "id": "uk_pa_taper",
+      "title": "Watch the £100K trap",
+      "description": "Income between £100K-£125,140 has an effective 60% rate due to personal allowance taper. Consider pension contributions to bring income below £100K",
+      "country": "UK",
+      "trigger": "income_in_taper_zone"
+    },
+    {
+      "id": "uk_isa",
+      "title": "Use your ISA allowance",
+      "description": "Invest up to £20,000/year in an ISA — returns are completely tax-free",
+      "country": "UK",
+      "trigger": "always"
+    }
+  ]
+}

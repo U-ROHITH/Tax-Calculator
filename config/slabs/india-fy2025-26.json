@@ -1,0 +1,53 @@
+{
+  "year": "FY 2025-26",
+  "newRegime": {
+    "standardDeduction": 75000,
+    "brackets": [
+      { "min": 0, "max": 400000, "rate": 0, "label": "Nil" },
+      { "min": 400000, "max": 800000, "rate": 0.05, "label": "5%" },
+      { "min": 800000, "max": 1200000, "rate": 0.10, "label": "10%" },
+      { "min": 1200000, "max": 1600000, "rate": 0.15, "label": "15%" },
+      { "min": 1600000, "max": 2000000, "rate": 0.20, "label": "20%" },
+      { "min": 2000000, "max": 2400000, "rate": 0.25, "label": "25%" },
+      { "min": 2400000, "max": null, "rate": 0.30, "label": "30%" }
+    ],
+    "rebate87A": { "limit": 1275000, "maxRebate": 60000 },
+    "surcharge": [
+      { "min": 5000000, "max": 10000000, "rate": 0.10 },
+      { "min": 10000000, "max": 20000000, "rate": 0.15 },
+      { "min": 20000000, "max": 50000000, "rate": 0.25 },
+      { "min": 50000000, "max": null, "rate": 0.37 }
+    ],
+    "cess": 0.04
+  },
+  "oldRegime": {
+    "standardDeduction": 50000,
+    "brackets": {
+      "below60": [
+        { "min": 0, "max": 250000, "rate": 0, "label": "Nil" },
+        { "min": 250000, "max": 500000, "rate": 0.05, "label": "5%" },
+        { "min": 500000, "max": 1000000, "rate": 0.20, "label": "20%" },
+        { "min": 1000000, "max": null, "rate": 0.30, "label": "30%" }
+      ],
+      "60to80": [
+        { "min": 0, "max": 300000, "rate": 0, "label": "Nil" },
+        { "min": 300000, "max": 500000, "rate": 0.05, "label": "5%" },
+        { "min": 500000, "max": 1000000, "rate": 0.20, "label": "20%" },
+        { "min": 1000000, "max": null, "rate": 0.30, "label": "30%" }
+      ],
+      "above80": [
+        { "min": 0, "max": 500000, "rate": 0, "label": "Nil" },
+        { "min": 500000, "max": 1000000, "rate": 0.20, "label": "20%" },
+        { "min": 1000000, "max": null, "rate": 0.30, "label": "30%" }
+      ]
+    },
+    "rebate87A": { "limit": 500000, "maxRebate": 12500 },
+    "surcharge": [
+      { "min": 5000000, "max": 10000000, "rate": 0.10 },
+      { "min": 10000000, "max": 20000000, "rate": 0.15 },
+      { "min": 20000000, "max": 50000000, "rate": 0.25 },
+      { "min": 50000000, "max": null, "rate": 0.37 }
+    ],
+    "cess": 0.04
+  }
+}
