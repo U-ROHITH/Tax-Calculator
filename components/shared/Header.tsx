@@ -1,11 +1,21 @@
 'use client';
 
 import Link from 'next/link';
-import { Calculator, Moon, Sun } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { BarChart3, Sun, Moon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
+const NAV_LINKS = [
+  { href: '/in', label: 'India' },
+  { href: '/us', label: 'United States' },
+  { href: '/uk', label: 'United Kingdom' },
+  { href: '/compare', label: 'Compare' },
+];
+
 export default function Header() {
+  const pathname = usePathname();
   const [dark, setDark] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem('theme');
@@ -13,6 +23,7 @@ export default function Header() {
     const isDark = stored ? stored === 'dark' : prefersDark;
     setDark(isDark);
     document.documentElement.classList.toggle('dark', isDark);
+    setMounted(true);
   }, []);
 
   const toggle = () => {
@@ -23,41 +34,82 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-sm">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-2 font-bold text-lg">
-          <Calculator className="h-5 w-5 text-primary" />
-          <span>TaxCalc Global</span>
+    <header className="sticky top-0 z-50 w-full border-b border-[var(--border)] bg-[var(--surface)]/80 backdrop-blur-md">
+      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        {/* Logo */}
+        <Link
+          href="/"
+          className="flex items-center gap-2 text-[var(--text-primary)] no-underline"
+        >
+          <BarChart3 className="h-5 w-5 text-[var(--primary)] shrink-0" />
+          <span className="text-sm font-semibold tracking-tight">
+            TaxCalc<span className="text-[var(--text-muted)] font-normal ml-0.5">Global</span>
+          </span>
         </Link>
-        <nav className="flex items-center gap-1 sm:gap-2">
-          {[
-            { href: '/in', flag: '🇮🇳', label: 'India' },
-            { href: '/us', flag: '🇺🇸', label: 'USA' },
-            { href: '/uk', flag: '🇬🇧', label: 'UK' },
-          ].map(({ href, flag, label }) => (
-            <Link
-              key={href}
-              href={href}
-              className="flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-            >
-              <span>{flag}</span>
-              <span className="hidden sm:inline">{label}</span>
-            </Link>
-          ))}
-          <Link
-            href="/compare"
-            className="ml-1 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Compare
-          </Link>
+
+        {/* Nav */}
+        <nav className="hidden md:flex items-center gap-1">
+          {NAV_LINKS.map(({ href, label }) => {
+            const isActive = pathname === href || pathname.startsWith(href + '/');
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={[
+                  'relative px-3 py-1.5 text-sm font-medium transition-colors duration-100',
+                  'hover:text-[var(--text-primary)]',
+                  isActive
+                    ? 'text-[var(--text-primary)] after:absolute after:bottom-0 after:left-3 after:right-3 after:h-px after:bg-[var(--primary)] after:content-[""]'
+                    : 'text-[var(--text-secondary)]',
+                ].join(' ')}
+              >
+                {label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Mobile nav + theme toggle */}
+        <div className="flex items-center gap-2">
+          {/* Mobile nav links */}
+          <nav className="flex md:hidden items-center gap-0.5">
+            {NAV_LINKS.map(({ href, label }) => {
+              const isActive = pathname === href || pathname.startsWith(href + '/');
+              const short = label === 'United States' ? 'US' : label === 'United Kingdom' ? 'UK' : label;
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  className={[
+                    'px-2 py-1 text-xs font-medium transition-colors duration-100',
+                    isActive
+                      ? 'text-[var(--text-primary)]'
+                      : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]',
+                  ].join(' ')}
+                >
+                  {short}
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Theme toggle */}
           <button
             onClick={toggle}
             aria-label="Toggle dark mode"
-            className="ml-1 rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-raised)] hover:text-[var(--text-primary)]"
           >
-            {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            {mounted ? (
+              dark ? (
+                <Sun className="h-4 w-4" />
+              ) : (
+                <Moon className="h-4 w-4" />
+              )
+            ) : (
+              <span className="h-4 w-4" />
+            )}
           </button>
-        </nav>
+        </div>
       </div>
     </header>
   );

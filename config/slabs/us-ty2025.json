@@ -52,6 +52,48 @@
       "threshold": { "single": 200000, "married_joint": 250000, "married_separate": 125000, "head_of_household": 200000 }
     }
   },
+  "capitalGainsRates": {
+    "single": [
+      {"min": 0, "max": 47025, "rate": 0},
+      {"min": 47025, "max": 518900, "rate": 0.15},
+      {"min": 518900, "max": null, "rate": 0.20}
+    ],
+    "married_joint": [
+      {"min": 0, "max": 94050, "rate": 0},
+      {"min": 94050, "max": 583750, "rate": 0.15},
+      {"min": 583750, "max": null, "rate": 0.20}
+    ],
+    "married_separate": [
+      {"min": 0, "max": 47025, "rate": 0},
+      {"min": 47025, "max": 291850, "rate": 0.15},
+      {"min": 291850, "max": null, "rate": 0.20}
+    ],
+    "head_of_household": [
+      {"min": 0, "max": 63000, "rate": 0},
+      {"min": 63000, "max": 551350, "rate": 0.15},
+      {"min": 551350, "max": null, "rate": 0.20}
+    ]
+  },
+  "niit": {
+    "rate": 0.038,
+    "threshold": {
+      "single": 200000,
+      "married_joint": 250000,
+      "married_separate": 125000,
+      "head_of_household": 200000
+    }
+  },
+  "amt": {
+    "exemption": {"single": 85700, "married_joint": 133300, "married_separate": 66650, "head_of_household": 85700},
+    "phaseoutStart": {"single": 609350, "married_joint": 1218700, "married_separate": 609350, "head_of_household": 609350},
+    "rate1": 0.26,
+    "rate1Threshold": 232600,
+    "rate2": 0.28
+  },
+  "standardDeductionAddOn": {
+    "age65orBlind": 1550,
+    "age65orBlindMFJ": 1250
+  },
   "states": {
     "CA": {
       "name": "California",
@@ -85,6 +127,34 @@
     },
     "TX": { "name": "Texas", "type": "none", "brackets": [] },
     "FL": { "name": "Florida", "type": "none", "brackets": [] },
-    "WA": { "name": "Washington", "type": "none", "brackets": [] }
+    "WA": { "name": "Washington", "type": "none", "brackets": [] },
+    "IL": {"name": "Illinois", "type": "flat", "rate": 0.0495, "brackets": []},
+    "PA": {"name": "Pennsylvania", "type": "flat", "rate": 0.0307, "brackets": []},
+    "MA": {"name": "Massachusetts", "type": "flat", "rate": 0.05, "brackets": []},
+    "AZ": {"name": "Arizona", "type": "flat", "rate": 0.025, "brackets": []},
+    "GA": {"name": "Georgia", "type": "flat", "rate": 0.055, "brackets": []},
+    "NC": {"name": "North Carolina", "type": "flat", "rate": 0.0475, "brackets": []},
+    "VA": {"name": "Virginia", "type": "flat", "rate": 0.0575, "brackets": []},
+    "OH": {"name": "Ohio", "type": "flat", "rate": 0.0399, "brackets": []},
+    "MI": {"name": "Michigan", "type": "flat", "rate": 0.0425, "brackets": []},
+    "NJ": {
+      "name": "New Jersey",
+      "type": "progressive",
+      "brackets": [
+        {"min": 0, "max": 20000, "rate": 0.014},
+        {"min": 20000, "max": 35000, "rate": 0.0175},
+        {"min": 35000, "max": 40000, "rate": 0.035},
+        {"min": 40000, "max": 75000, "rate": 0.05525},
+        {"min": 75000, "max": 500000, "rate": 0.0637},
+        {"min": 500000, "max": 1000000, "rate": 0.0897},
+        {"min": 1000000, "max": null, "rate": 0.1075}
+      ]
+    }
+  },
+  "eitcTable": {
+    "0children": {"maxIncome": 18591, "maxCredit": 632},
+    "1child": {"maxIncome": 49084, "maxCredit": 4213},
+    "2children": {"maxIncome": 55768, "maxCredit": 6960},
+    "3plus": {"maxIncome": 59899, "maxCredit": 7830}
   }
 }

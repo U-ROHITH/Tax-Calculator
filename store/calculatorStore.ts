@@ -21,7 +21,8 @@ export const useCalculatorStore = create<CalculatorState>((set) => ({
   result: null,
   isCalculating: false,
   setCountry: (country) => set({ country, input: {}, result: null }),
-  setInput: (input) => set((state) => ({ input: { ...state.input, ...input } })),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  setInput: (input) => set((state) => ({ input: { ...(state.input as any), ...(input as any) } as Partial<TaxInput> })),
   setResult: (result) => set({ result }),
   setIsCalculating: (isCalculating) => set({ isCalculating }),
   reset: () => set({ input: {}, result: null }),
