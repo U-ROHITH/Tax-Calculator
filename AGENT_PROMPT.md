@@ -1,22 +1,32 @@
-# TaxCalc Global — Agent Mission File v2
+# TaxCalc Global — Agent Mission File v3
 
 > Read this entire file before touching any code.
 > After every milestone: git add -A → commit → push → update this file → continue.
 
 ---
 
-## The Mission (Revised)
+## The Mission (v3 — Honest Scope)
 
-**This is not a basic tax calculator. It must replace a Chartered Accountant.**
+**Correct positioning: "Know your tax before you meet your CA" — not replace them.**
 
-Every computation a CA does for income tax filing must be available here:
-- All income heads (salary, house property, business, capital gains, other sources)
-- Every deduction under Chapter VI-A (India), every credit and schedule (US), all reliefs (UK)
-- Capital gains with indexation, advance tax schedule, interest u/s 234A/B/C
-- Results that look like a professional tax assessment report, not a student project
+A CA's value is 85% judgment, representation, planning — not formula execution.
+What the app CAN cover beyond basic calculation:
+- All formula-based computation for India/US/UK (DONE — M1–M21)
+- Prospective what-if planning tools (build — M22)
+- Multi-year loss carry-forward tracking (build — M23)
+- Document checklist and AIS/26AS validation guidance (build — M24)
+- Salary/income restructuring optimizer (build — M25)
+
+**What the app CANNOT do (never claim otherwise):**
+- Legal interpretation (circulars, CBDT notifications, case law, AAR rulings)
+- Document review (Form 16, 26AS, AIS, bank statements, property docs)
+- Notice handling and representation before AO, CIT(A), ITAT
+- Fiduciary responsibility — CA is legally liable; app has a disclaimer
+- GST, TDS filings, tax audit (3CA/3CB/3CD), ROC, FEMA/RBI
+- Business complexity: transfer pricing, Section 50C, 56(2)(x), unlisted shares, 80-IAC
 
 **UI standard:** MNC fintech grade. Think Wise, Monzo, Linear.app, Bloomberg Terminal.
-- Zero emojis anywhere in the UI — use Lucide icons
+- Zero emojis anywhere in the UI — use Lucide icons only
 - Professional typography, proper information hierarchy
 - Dark/light mode, animated charts, print-quality PDF
 
@@ -384,7 +394,145 @@ Updated comparison page. Full `npm run build` clean. All tests pass. Push. Done.
 
 ---
 
+## v3 — Bridging the CA Gap (What To Build Next)
+
+These milestones add features that genuinely differentiate from a basic calculator.
+All pages must use the existing CSS token design system (--surface, --border, --text-primary, etc.)
+No emojis. Lucide icons only. After every milestone: commit + push.
+
+---
+
+### 🔲 M22 — What-If Tax Planning Tools (app/plan page)
+
+**Route:** `/plan`  
+**Purpose:** Let user model future decisions before making them — closest we can get to a CA's prospective planning.
+
+**Features to build:**
+
+#### India — Salary Restructuring Optimizer
+- Input: Current CTC (total cost to company)
+- Compute optimal component split: Basic + DA + HRA (40%/50% of basic) + LTA (2 trips/4yr block) + Professional Tax (₹2,500) + NPS employer (10% of basic) + Food Allowance (₹26,400/yr exempt) + remaining as special allowance
+- Show: current tax vs restructured tax vs potential saving
+- Key rule: HRA exemption = min(actual HRA, rent paid - 10% of basic, 50%/40% of basic for metro/non-metro)
+
+#### India — LTCG Timing Optimizer
+- Input: Asset purchase date, purchase price, current sale price
+- Show: tax if sold before April 1 (current FY) vs after April 1 (next FY)
+- Highlight 2-year LTCG threshold for property
+- Show CII indexation benefit for property
+
+#### India — NPS Optimization Tool
+- Input: Current 80C investments, salary
+- Show: additional NPS 80CCD(1B) ₹50K saving + employer NPS 80CCD(2) headroom
+- Calculate exact tax saving at current marginal rate
+
+#### India — HUF Tax Splitting Tool (informational)
+- Input: Total family income
+- Show: How routing ₹X through an HUF (which gets its own basic exemption) could reduce overall family tax
+- Disclaimer: "Consult a CA to set up HUF legally"
+
+**UI:** 4 tabs on `/plan` page. Each tab = a planning tool. Results panel on the right (same pattern as calculator pages).
+
+---
+
+### 🔲 M23 — Multi-Year Loss Carry-Forward Tracker (app/carryforward page)
+
+**Route:** `/carryforward`  
+**Purpose:** Track losses from prior years that reduce this year's tax — something the app is currently stateless about.
+
+**Features:**
+
+#### Types to add to engine/types.ts:
+```ts
+export interface CarryForwardLoss {
+  type: 'business' | 'ltcg' | 'stcg' | 'house_property' | 'depreciation';
+  amount: number;
+  yearOfLoss: string; // "FY 2022-23"
+  expiryYear: string; // "FY 2030-31" (8yr for business; indefinite for depreciation)
+  remainingBalance: number;
+}
+```
+
+#### Logic:
+- Business loss: max 8 years, can only set off against business income
+- Unabsorbed depreciation: indefinite, set off against any income
+- LTCG loss: 8 years, only against LTCG
+- STCG loss: 8 years, against LTCG or STCG
+- House property loss: already capped at ₹2L/yr — show cumulative BF loss
+
+#### UI:
+- Form to enter BF losses (year, type, amount)
+- Table showing each loss with expiry, remaining balance, this-year setoff
+- How much tax is saved this year due to BF losses
+- Warning when a loss is expiring next year
+
+---
+
+### 🔲 M24 — Document Checklist & AIS/26AS Validator (app/checklist page)
+
+**Route:** `/checklist`  
+**Purpose:** Based on user's income profile, tell them exactly what documents to collect — closes the "document review" gap.
+
+**Features:**
+
+#### Smart Checklist Generator
+- User selects: income sources (salary / house property / business / capital gains / other)
+- App outputs: exact list of documents needed for each
+  - Salary → Form 16 Part A+B, Form 12BA, Pay slips, Rent receipts (if HRA), LTA travel bills
+  - House Property → Loan statement (interest certificate), Municipal tax receipt, Rent agreement
+  - Capital Gains (equity) → Consolidated account statement, broker capital gains report
+  - Capital Gains (property) → Sale deed, purchase deed, stamp duty receipt, CII table
+  - Business → P&L, Balance sheet, GST returns, bank statements, investment proof
+  - FD/Interest → Bank TDS certificate (Form 16A), FD maturity receipts
+
+#### AIS/26AS Cross-Check Guide
+- Input: what you reported vs what might appear in AIS
+- Common mismatches to warn about:
+  - Interest income in AIS that users forget to report
+  - Dividend income (companies report to IT dept)
+  - Property purchase/sale transactions (SFT reporting by registrar)
+  - High-value cash transactions
+- Show: "These items appear in AIS automatically — if you miss them, you'll get a notice"
+
+#### ITR Form Guide
+- Based on income sources entered, show which ITR form to file
+- Explain what each form is and what happens if you file the wrong one
+- Already computed in India engine (itrFormRecommended) — surface it clearly here
+
+**UI:** Step-by-step wizard. Select income sources → generate checklist → download as PDF.
+
+---
+
+### 🔲 M25 — India Advanced: Section 50C / 56(2)(x) / Unlisted Shares (engine additions)
+
+**Purpose:** Cover business-client complexity that's currently missing from the India engine.
+
+#### Section 50C (Property sale below stamp duty value)
+- If sale consideration < stamp duty value → deemed sale consideration = stamp duty value
+- Add `stampDutyValue` field to `CapitalGainEntry` for property type
+- Compute: if saleValue < stampDutyValue → use stampDutyValue for capital gains
+- Show warning: "Stamp duty value exceeds sale price — taxed on ₹X not ₹Y"
+
+#### Section 56(2)(x) — Gift Tax
+- If gift received from non-relative > ₹50,000 → fully taxable as "other sources"
+- Add `giftReceived` and `giftFromRelative` fields to IndiaInput
+- Show breakdown: exempt vs taxable portion
+
+#### Unlisted Shares Capital Gains
+- STCG (held < 24 months): slab rate
+- LTCG (held ≥ 24 months): 12.5% without indexation (post-Budget 2024)
+- Add `assetType: 'unlisted_shares'` to CapitalGainEntry
+
+#### Startup / Section 80-IAC
+- Tax holiday for eligible startups (100% deduction for 3 consecutive years out of first 10)
+- Add `section80IAC?: number` deduction to IndiaInput
+
+**Add tests for each new scenario.**
+
+---
+
 ## Commit Convention
+
 ```
 milestone: M13 — design system rebuild
 milestone: M14 — India engine v2 (all income heads + deductions)
