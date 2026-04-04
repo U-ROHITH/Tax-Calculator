@@ -471,7 +471,9 @@ export interface CarryForwardLoss {
 
 ---
 
-### 🔲 M24 — Document Checklist & AIS/26AS Validator (app/checklist page)
+### ✅ M24 — DONE — Document Checklist & AIS/26AS Validator (app/checklist page)
+
+**Pushed ✓**
 
 **Route:** `/checklist`  
 **Purpose:** Based on user's income profile, tell them exactly what documents to collect — closes the "document review" gap.
