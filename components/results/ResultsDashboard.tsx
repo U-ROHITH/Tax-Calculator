@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { TaxResult } from '@/engine/types';
 import { formatByCurrency, formatPercent } from '@/lib/formatters';
 import TaxBreakdownChart from './TaxBreakdownChart';
@@ -30,7 +31,12 @@ export default function ResultsDashboard({ result }: Props) {
   };
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      className="space-y-6"
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35 }}
+    >
       {/* PDF Download */}
       <div className="flex justify-end">
         <button
@@ -49,11 +55,17 @@ export default function ResultsDashboard({ result }: Props) {
           { label: 'Total Tax', value: formatByCurrency(totalTax, currency), color: 'text-red-600' },
           { label: 'Net Income', value: formatByCurrency(netIncome, currency), color: 'text-green-600' },
           { label: 'Effective Rate', value: formatPercent(effectiveRate), color: 'text-primary' },
-        ].map((card) => (
-          <div key={card.label} className="rounded-xl border border-border bg-card p-4">
+        ].map((card, i) => (
+          <motion.div
+            key={card.label}
+            className="rounded-xl border border-border bg-card p-4"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: i * 0.07, duration: 0.25 }}
+          >
             <p className="text-xs text-muted-foreground">{card.label}</p>
             <p className={`mt-1 text-lg font-bold ${card.color}`}>{card.value}</p>
-          </div>
+          </motion.div>
         ))}
       </div>
 
@@ -120,6 +132,6 @@ export default function ResultsDashboard({ result }: Props) {
 
       {/* Saving tips */}
       {result.tips.length > 0 && <SavingTips tips={result.tips} currency={currency} />}
-    </div>
+    </motion.div>
   );
 }
