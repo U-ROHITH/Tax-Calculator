@@ -32,8 +32,8 @@ export default function BracketWaterfall({ bracketDetails, currency }: Props) {
           <XAxis dataKey="name" tick={{ fontSize: 11 }} />
           <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => formatByCurrency(v, currency).replace(/[₹$£]/g, '')} />
           <Tooltip
-            formatter={(value: number, name: string) => [
-              formatByCurrency(value, currency),
+            formatter={(value: unknown, name: unknown) => [
+              formatByCurrency(Number(value), currency),
               name === 'tax' ? 'Tax' : 'Taxable Income',
             ]}
             contentStyle={{

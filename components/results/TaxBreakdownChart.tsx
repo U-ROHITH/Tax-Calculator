@@ -39,7 +39,7 @@ export default function TaxBreakdownChart({ breakdown, currency }: Props) {
             ))}
           </Pie>
           <Tooltip
-            formatter={(value: number) => [formatByCurrency(value, currency), '']}
+            formatter={(value: unknown) => [formatByCurrency(Number(value), currency), '']}
             contentStyle={{
               borderRadius: '8px',
               border: '1px solid var(--border)',

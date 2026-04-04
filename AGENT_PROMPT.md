@@ -100,70 +100,31 @@ git push origin master
 - `components/results/RegimeComparison.tsx` — India old vs new side-by-side comparison card with savings highlight
 - `components/results/SavingTips.tsx` — Contextual tips with affiliate CTA buttons
 
+### ✅ MILESTONE 9 — Route Pages + Comparison + PDF + Monetization
+- `app/in/page.tsx`, `app/us/page.tsx`, `app/uk/page.tsx` — Server components with SEO metadata, each renders its client Calculator component
+- `components/calculator/IndiaCalculator.tsx`, `USCalculator.tsx`, `UKCalculator.tsx` — Client components managing state, rendering form + ResultsDashboard
+- `app/compare/page.tsx` + `components/calculator/CompareCalculator.tsx` — Side-by-side comparison of all 3 countries, horizontal bar chart, insight callouts
+- `lib/pdf.tsx` — `generateTaxPDF(result, premium)` using @react-pdf/renderer, downloads client-side
+- `components/monetization/AdBanner.tsx` — AdSense wrapper, shows placeholder in dev when NEXT_PUBLIC_ADSENSE_ID not set
+- `components/monetization/AffiliateCard.tsx` — Styled affiliate CTA card
+- `lib/utils.ts` — `cn()` utility for shadcn
+- PDF download button added to ResultsDashboard
+- **Pushed to GitHub ✓**
+
 ---
 
 ## What Still Needs To Be Done
 
-### 🔲 MILESTONE 9 — Fix CalculatorLayout + Wire Route Pages
-The `CalculatorLayout` component has a bug: it tries to clone React elements to inject `onResult` prop, but that approach is fragile. Fix it by converting to a pattern where forms accept `onResult` as a prop directly and CalculatorLayout manages state.
+### 🔲 MILESTONE 10 — Fix Build TypeScript Errors
+`npm run build` currently fails with Recharts Tooltip/Label formatter type errors in `CompareCalculator.tsx`. Fix them and get a clean build.
 
-Create the actual route pages:
-- `app/in/page.tsx` — India calculator page (metadata + IndiaForm + CalculatorLayout)
-- `app/us/page.tsx` — US calculator page (metadata + USForm + CalculatorLayout)
-- `app/uk/page.tsx` — UK calculator page (metadata + UKForm + CalculatorLayout)
+Errors to fix:
+- `formatter` prop on `<Tooltip>` — use `(v: unknown) => ...` not typed `number`
+- `formatter` on `<Bar label>` — same, use `(v: unknown) => \`${v}%\``
 
-Each page should have proper `generateMetadata()` with SEO keywords from SDD §10.1.
+After fixing, run `npm run build` until it exits 0. Then push to GitHub.
 
-The simplest fix: make `CalculatorLayout` accept `onResult` as a prop OR refactor so each country page manages its own state. Recommended pattern:
-
-```tsx
-// app/in/page.tsx — SERVER component for SEO metadata
-export const metadata = { title: 'India Tax Calculator...' };
-export default function IndiaPage() {
-  return <IndiaCalculator />;
-}
-
-// components/calculator/IndiaCalculator.tsx — CLIENT component
-'use client';
-export default function IndiaCalculator() {
-  const [result, setResult] = useState(null);
-  return (
-    <div className="two-col-layout">
-      <IndiaForm onResult={setResult} />
-      {result ? <ResultsDashboard result={result} /> : <EmptyState />}
-    </div>
-  );
-}
-```
-
-### 🔲 MILESTONE 10 — Comparison Page
-- `app/compare/page.tsx` — Enter one income, see India/US/UK side by side
-- Single income input with currency-agnostic view
-- Horizontal bar chart comparing effective rates (Recharts)
-- Comparison table: gross, total tax, net, monthly take-home per country
-- Uses all 3 engines with sensible defaults (new regime India, single US, England UK)
-
-### 🔲 MILESTONE 11 — Missing shadcn dependency fix
-The `components/ui/` folder references `class-variance-authority` which may not be installed. Run:
-```bash
-npm install class-variance-authority clsx tailwind-merge @radix-ui/react-select @radix-ui/react-tabs @radix-ui/react-separator @radix-ui/react-label
-```
-Then run `npm run build` and fix all TypeScript/import errors.
-
-### 🔲 MILESTONE 12 — PDF Export
-- `lib/pdf.tsx` — @react-pdf/renderer template
-- Free tier: 1-page summary (gross, tax, net, effective rate, breakdown table)
-- Premium tier: 3-page (+ bracket waterfall, regime comparison, tips with QR codes)
-- Add download button to ResultsDashboard
-- PdfGate component: free download immediate, premium shows affiliate interstitial
-
-### 🔲 MILESTONE 13 — Monetization Layer
-- `components/monetization/AdBanner.tsx` — AdSense container (shows placeholder div in dev)
-- `components/monetization/AffiliateCard.tsx` — Styled CTA linking to affiliates from `config/affiliates.json`
-- Wire affiliate trigger conditions to calculation results (e.g., if India 80C < 150000 → show Groww card)
-- Place ad placeholders per SDD §8.1
-
-### 🔲 MILESTONE 14 — SEO & Performance
+### 🔲 MILESTONE 11 — SEO & Performance
 - `generateMetadata()` for each route with keywords from SDD §10.1
 - JSON-LD `FAQPage` structured data per country
 - `next-sitemap.config.js` setup
@@ -171,13 +132,16 @@ Then run `npm run build` and fix all TypeScript/import errors.
 - Open Graph images in `public/og/`
 - Run `npm run build` cleanly with 0 errors
 
-### 🔲 MILESTONE 15 — Final Polish & Deploy
-- Dark mode support (next-themes or CSS class toggle)
-- Framer Motion animations on results (number counters, chart reveal)
-- Mobile layout QA
+### 🔲 MILESTONE 11 — SEO & sitemap
+- JSON-LD FAQPage structured data in each country page
+- `next-sitemap.config.js` + `robots.txt`
+- Verify `npm run build` exits 0 → push to GitHub
+
+### 🔲 MILESTONE 12 — Final Polish & Deploy
+- Dark mode toggle in Header
+- Framer Motion result card animations
 - `npm run test` — all 104 tests pass
-- `npm run build` — clean production build
-- Push all to GitHub, verify Vercel deploys
+- `npm run build` clean → push to GitHub → deploy Vercel
 
 ---
 
