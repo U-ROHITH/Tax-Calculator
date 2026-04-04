@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { href: '/uk', label: 'United Kingdom' },
   { href: '/compare', label: 'Compare' },
   { href: '/plan', label: 'Tax Planning' },
+  { href: '/checklist', label: 'Checklist' },
 ];
 
 export default function Header() {
