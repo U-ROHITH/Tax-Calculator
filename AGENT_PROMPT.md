@@ -326,7 +326,14 @@ Success: #16A34A | Warning: #D97706 | Danger: #DC2626
 - Animated KPI cards with Framer Motion stagger
 - **Pushed ✓**
 
-### 🔲 M21 — Compare Page v2 + Final QA
+### ✅ M21 — Compare Page v2 + Final QA (DONE)
+- CompareCalculator rebuilt: no emojis, CSS token system, Lucide icons
+- Country cards with left-border accent, rank badges (TrendingUp/Down), full comparison table
+- Recharts horizontal bar chart with CSS variable colors
+- All 157 tests pass · clean `next build` exit 0
+- **Pushed ✓**
+
+### [ARCHIVED] 🔲 M21 — Compare Page v2 (old placeholder)
 Replace all existing UI components with the MNC-grade design system above.
 - New `app/globals.css` (token-based, light+dark)
 - New `components/ui/` primitives (Input, Select, Card, Badge, Tabs, Button, Table)
