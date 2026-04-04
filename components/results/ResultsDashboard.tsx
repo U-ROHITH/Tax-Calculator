@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { TaxResult } from '@/engine/types';
 import { formatByCurrency, formatPercent } from '@/lib/formatters';
 import TaxBreakdownChart from './TaxBreakdownChart';
@@ -13,10 +14,34 @@ interface Props {
 }
 
 export default function ResultsDashboard({ result }: Props) {
+  const [downloading, setDownloading] = useState(false);
   const { grossIncome, totalTax, netIncome, effectiveRate, marginalRate, currency, breakdown } = result;
+
+  const handleDownloadPDF = async () => {
+    setDownloading(true);
+    try {
+      const { generateTaxPDF } = await import('@/lib/pdf');
+      await generateTaxPDF(result, false);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
+      {/* PDF Download */}
+      <div className="flex justify-end">
+        <button
+          onClick={handleDownloadPDF}
+          disabled={downloading}
+          className="flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2 text-xs font-semibold shadow-sm transition-all hover:bg-accent disabled:opacity-50"
+        >
+          {downloading ? '⏳ Generating...' : '📄 Download PDF Report'}
+        </button>
+      </div>
+
       {/* Summary cards */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {[
