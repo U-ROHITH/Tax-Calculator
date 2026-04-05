@@ -114,9 +114,14 @@ export interface IndiaInput {
   tdsDeducted?: number;         // TDS already deducted
   advanceTaxPaid?: number;      // advance tax paid during FY
 
-  // --- ARREAR SALARY ---
-  arrearSalary?: number;        // for 89(1) relief calculation
-  arrearYear?: number;          // which previous year the arrear pertains to
+  // --- ARREAR SALARY (Section 89(1)) ---
+  arrearSalary?: number;           // arrear amount received this year
+  arrearYear?: number;             // which previous year the arrear pertains to (numeric, e.g. 2022)
+  arrearPertainingToYear?: string; // e.g. "FY 2022-23" (display label)
+
+  // --- AMT u/s 115JC ---
+  amtApplicable?: boolean;         // flag if AMT should be computed
+  amtAdjustedIncome?: number;      // adjusted total income for AMT purposes
 
   // --- SECTION 56(2)(x) — gifts from non-relatives ---
   giftReceived?: number;        // total gift value received
@@ -267,10 +272,28 @@ export interface TaxResult {
   grossTotalIncome?: number;
   taxableIncome?: number;
 
+  // India specific — 89(1) and AMT
+  relief89?: number;         // tax relief computed u/s 89(1) for arrear salary
+  amtLiability?: number;    // AMT u/s 115JC (India) or AMT (US) if higher than regular tax
+
   // US specific
   agi?: number;              // Adjusted Gross Income
-  amtLiability?: number;    // AMT if applicable
   credits?: TaxCredit[];    // list of credits applied
+  // AGI decomposition (for AGI waterfall display)
+  seDeduction?: number;
+  retirementDeduction?: number;
+  studentLoanDeduction?: number;
+  deductionUsed?: number;   // standard or itemized deduction amount
+  qbiDeduction?: number;
+  // State tax detail
+  stateTax?: number;
+  stateName?: string;
+  stateRate?: number;       // effective state rate
+  stateTaxableIncome?: number;
+
+  // UK specific
+  niBreakdown?: { label: string; rate: number; on: string; amount: number }[];
+  studentLoanDetail?: { plan: string; threshold: number; rate: number; repayment: number };
 }
 
 export interface CarryForwardLoss {

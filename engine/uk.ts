@@ -255,6 +255,41 @@ export function calculateUKTax(input: UKInput): TaxResult {
     });
   }
 
+  // NI breakdown
+  const ni = ukSlabs.nationalInsurance;
+  const niBreakdown: { label: string; rate: number; on: string; amount: number }[] = [];
+  if (grossIncome > ni.primaryThreshold) {
+    const mainBandIncome = Math.min(grossIncome, ni.upperEarningsLimit) - ni.primaryThreshold;
+    const mainNI = mainBandIncome * ni.mainRate;
+    niBreakdown.push({
+      label: 'Employee NI (Class 1)',
+      rate: ni.mainRate,
+      on: `£${ni.primaryThreshold.toLocaleString()} – £${ni.upperEarningsLimit.toLocaleString()}`,
+      amount: mainNI,
+    });
+  }
+  if (grossIncome > ni.upperEarningsLimit) {
+    const higherNI = (grossIncome - ni.upperEarningsLimit) * ni.upperRate;
+    niBreakdown.push({
+      label: 'Higher NI (Class 1)',
+      rate: ni.upperRate,
+      on: `Above £${ni.upperEarningsLimit.toLocaleString()}`,
+      amount: higherNI,
+    });
+  }
+
+  // Student loan detail
+  let studentLoanDetail: { plan: string; threshold: number; rate: number; repayment: number } | undefined;
+  if (studentLoanPlan !== 'none' && studentLoanTax > 0) {
+    const slConfig = ukSlabs.studentLoan[studentLoanPlan];
+    studentLoanDetail = {
+      plan: studentLoanPlan,
+      threshold: slConfig.threshold,
+      rate: slConfig.rate,
+      repayment: studentLoanTax,
+    };
+  }
+
   return {
     country: 'UK',
     grossIncome,
@@ -267,5 +302,7 @@ export function calculateUKTax(input: UKInput): TaxResult {
     bracketDetails,
     tips,
     currency: 'GBP',
+    niBreakdown: niBreakdown.length > 0 ? niBreakdown : undefined,
+    studentLoanDetail,
   };
 }

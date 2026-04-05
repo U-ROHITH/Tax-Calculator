@@ -1,12 +1,31 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { TaxResult } from '@/engine/types';
+import { IndiaInput } from '@/engine/types';
 import IndiaForm from './IndiaForm';
 import ResultsDashboard from '@/components/results/ResultsDashboard';
 
 export default function IndiaCalculator() {
   const [result, setResult] = useState<TaxResult | null>(null);
+  const [indiaInput, setIndiaInput] = useState<Partial<IndiaInput> | null>(null);
+  const [prefillValues, setPrefillValues] = useState<Partial<IndiaInput> | null>(null);
+
+  useEffect(() => {
+    const prefill = localStorage.getItem('taxcalc_prefill');
+    if (prefill) {
+      try {
+        const data = JSON.parse(prefill);
+        const age = Date.now() - data.timestamp;
+        if (age < 10 * 60 * 1000) {
+          setPrefillValues(data.values as Partial<IndiaInput>);
+          localStorage.removeItem('taxcalc_prefill');
+        }
+      } catch {
+        // ignore malformed data
+      }
+    }
+  }, []);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -20,12 +39,12 @@ export default function IndiaCalculator() {
       <div className="grid gap-8 lg:grid-cols-2">
         <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
           <h2 className="mb-5 text-base font-semibold">Enter your details</h2>
-          <IndiaForm onResult={setResult} />
+          <IndiaForm onResult={setResult} onInputChange={setIndiaInput} initialValues={prefillValues ?? undefined} />
         </div>
 
         <div>
           {result ? (
-            <ResultsDashboard result={result} />
+            <ResultsDashboard result={result} indiaInput={indiaInput ?? undefined} />
           ) : (
             <div className="flex h-full min-h-72 items-center justify-center rounded-2xl border border-dashed border-border bg-muted/20 p-8 text-center">
               <div>

@@ -209,9 +209,10 @@ describe('Section 80-IAC — Startup Deduction', () => {
       section80IAC: 1000000,
     }));
 
-    // After 80-IAC deduction, taxable income should be 0
+    // After 80-IAC deduction, slab taxable income = 0
+    // BUT AMT u/s 115JC applies: 18.5% on ₹10L + 4% cess = ₹1,92,400
     expect(with80IAC.taxableIncome).toBe(0);
-    expect(with80IAC.totalTax).toBe(0);
+    expect(with80IAC.totalTax).toBe(192400);
   });
 
   it('businessProfit ₹10L, section80IAC ₹5L → ₹5L taxable', () => {
@@ -245,5 +246,117 @@ describe('Section 80-IAC — Startup Deduction', () => {
 
     // 80-IAC should have no effect on presumptive income
     expect(with44AD.taxableIncome).toBe(without80IAC.taxableIncome);
+  });
+});
+
+// ─── Section 89(1) — Arrear Salary Relief ────────────────────────────────────
+
+describe('Section 89(1) — Arrear Salary Relief', () => {
+  it('no arrear → relief89 is undefined', () => {
+    const result = calculateIndiaTax(oldInput({
+      grossSalary: 1200000,
+    }));
+    expect(result.relief89).toBeUndefined();
+  });
+
+  it('arrear reduces total tax', () => {
+    const withArrear = calculateIndiaTax(oldInput({
+      grossSalary: 1500000,
+      arrearSalary: 200000,
+      arrearPertainingToYear: 'FY 2022-23',
+    }));
+
+    const withoutArrear = calculateIndiaTax(oldInput({
+      grossSalary: 1500000,
+    }));
+
+    // With 89(1) relief, total tax should be less than or equal to without arrear
+    // (relief brings tax close to what it would be if arrear had been received in prior year)
+    expect(withArrear.totalTax).toBeLessThanOrEqual(withoutArrear.totalTax);
+  });
+
+  it('relief89 is defined and positive when arrear pushes income into higher bracket', () => {
+    // ₹11L gross salary includes ₹1L arrear → taxable = ₹10.5L (10L-11L is 30% bracket)
+    // Without arrear: taxable ≈ ₹9.5L (all in 20% bracket)
+    // Prior base = 10.5L × 0.85 = ₹8.925L (stays in 20% bracket)
+    // T1-T2 (30% on ₹1L) > T3-T4 (20% differential) → positive relief = ₹5,200
+    const result = calculateIndiaTax(oldInput({
+      grossSalary: 1100000,
+      arrearSalary: 100000,
+    }));
+    // relief89 should be defined and positive
+    expect(result.relief89).toBeDefined();
+    expect(result.relief89!).toBeGreaterThan(0);
+  });
+
+  it('Section 89(1) relief appears in tax breakdown', () => {
+    const result = calculateIndiaTax(oldInput({
+      grossSalary: 1500000,
+      arrearSalary: 300000,
+    }));
+    if (result.relief89 && result.relief89 > 0) {
+      const reliefItem = result.breakdown.find((b) => b.label === 'Section 89(1) Relief');
+      expect(reliefItem).toBeDefined();
+      expect(reliefItem!.amount).toBeLessThan(0); // negative = reduction
+    }
+  });
+});
+
+// ─── AMT u/s 115JC ───────────────────────────────────────────────────────────
+
+describe('AMT u/s 115JC', () => {
+  it('no AMT flag → amtLiability is undefined', () => {
+    const result = calculateIndiaTax(oldInput({
+      grossSalary: 2000000,
+      section80C: 150000,
+    }));
+    expect(result.amtLiability).toBeUndefined();
+  });
+
+  it('amtApplicable=true with small taxable income → AMT kicks in', () => {
+    // Adjusted income ₹50L, regular tax on ~0 (lots of deductions)
+    // AMT = 18.5% × 50L + cess ≈ ₹9.62L
+    const result = calculateIndiaTax(oldInput({
+      grossSalary: 1000000,
+      amtApplicable: true,
+      amtAdjustedIncome: 5000000,
+      section80C: 150000,
+    }));
+
+    expect(result.amtLiability).toBeDefined();
+    expect(result.amtLiability!).toBeGreaterThan(0);
+  });
+
+  it('AMT u/s 115JC appears in breakdown when applicable', () => {
+    const result = calculateIndiaTax(oldInput({
+      grossSalary: 1000000,
+      amtApplicable: true,
+      amtAdjustedIncome: 5000000,
+    }));
+
+    if (result.amtLiability && result.amtLiability > 0) {
+      const amtItem = result.breakdown.find((b) => b.label === 'AMT u/s 115JC');
+      expect(amtItem).toBeDefined();
+      expect(amtItem!.amount).toBeGreaterThan(0);
+    }
+  });
+
+  it('AMT rate is approximately 18.5% of adjusted income (+ cess, no surcharge below ₹50L)', () => {
+    const adjustedIncome = 3000000; // ₹30L — no surcharge
+    const result = calculateIndiaTax(oldInput({
+      grossSalary: 500000,
+      amtApplicable: true,
+      amtAdjustedIncome: adjustedIncome,
+    }));
+
+    // AMT base = 18.5% × 30L = 5,55,000; cess = 4% → ~5,77,200
+    const expectedAMTBase = adjustedIncome * 0.185;
+    const expectedAMTWithCess = Math.round(expectedAMTBase * 1.04);
+
+    // amtLiability = max(0, amtTotal - regularTax)
+    // For small regular tax, amtLiability ≈ expectedAMTWithCess - regularTax
+    const regularTax = result.totalTax - (result.amtLiability ?? 0);
+    const impliedAMT = regularTax + (result.amtLiability ?? 0);
+    expect(impliedAMT).toBeCloseTo(expectedAMTWithCess, -3);
   });
 });

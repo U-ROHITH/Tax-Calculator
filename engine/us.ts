@@ -463,16 +463,21 @@ export function calculateUSTax(input: USInput): TaxResult {
   // ── Step 10: State income tax ─────────────────────────────────────────────
 
   let stateTax = 0;
+  let stateNameStr: string | undefined;
+  let stateEffectiveRate: number | undefined;
   const stateKey = (state ?? '').toUpperCase();
 
   if (stateKey && !ZERO_TAX_STATES.has(stateKey)) {
-    const stateConfig = (usSlabs.states as Record<string, { type: string; rate?: number; brackets: { min: number; max: number | null; rate: number }[] }>)[stateKey];
+    const stateConfig = (usSlabs.states as Record<string, { name?: string; type: string; rate?: number; brackets: { min: number; max: number | null; rate: number }[] }>)[stateKey];
     if (stateConfig) {
+      stateNameStr = stateConfig.name ?? stateKey;
       if (stateConfig.type === 'flat' && stateConfig.rate !== undefined) {
         stateTax = taxableIncomeTotal * stateConfig.rate;
+        stateEffectiveRate = stateConfig.rate;
       } else if (stateConfig.type === 'progressive' && stateConfig.brackets.length > 0) {
         const { totalTax: sStateTax } = calculateBracketTax(taxableIncomeTotal, stateConfig.brackets);
         stateTax = sStateTax;
+        stateEffectiveRate = taxableIncomeTotal > 0 ? sStateTax / taxableIncomeTotal : 0;
       }
     }
   }
@@ -546,6 +551,9 @@ export function calculateUSTax(input: USInput): TaxResult {
 
   const tips: SavingTip[] = buildTips(input, taxableIncomeTotal, marginalRate);
 
+  // Compute retirement above-line deductions for AGI waterfall
+  const retirementDeductionTotal = iraDeduction + sepDeduction;
+
   return {
     country: 'US',
     grossIncome,
@@ -563,6 +571,17 @@ export function calculateUSTax(input: USInput): TaxResult {
     taxableIncome: taxableIncomeTotal,
     amtLiability: amtLiability > 0 ? amtLiability : undefined,
     credits: appliedCredits.length > 0 ? appliedCredits : undefined,
+    // AGI waterfall
+    seDeduction: seDeduction > 0 ? seDeduction : undefined,
+    retirementDeduction: retirementDeductionTotal > 0 ? retirementDeductionTotal : undefined,
+    studentLoanDeduction: sliDeduction > 0 ? sliDeduction : undefined,
+    deductionUsed: deduction,
+    qbiDeduction: qbiDeduction > 0 ? qbiDeduction : undefined,
+    // State
+    stateTax: stateTax > 0 ? stateTax : undefined,
+    stateName: stateNameStr,
+    stateRate: stateEffectiveRate,
+    stateTaxableIncome: taxableIncomeTotal,
   };
 }
 

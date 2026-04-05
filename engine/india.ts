@@ -652,6 +652,93 @@ function buildTips(input: IndiaInput, regime: 'old' | 'new', taxableIncome: numb
   return tips;
 }
 
+// ─── Section 89(1) Relief — Arrear Salary ────────────────────────────────────
+
+/**
+ * Simplified Form 10E calculation for Section 89(1) arrear salary relief.
+ *
+ * Steps:
+ *   T1 = tax on (current year income WITH arrear)           [already computed as totalTax]
+ *   T2 = tax on (current year income WITHOUT arrear)
+ *   T3 = tax on (prior year income WITH arrear added)       [prior year income = currentIncome × 0.85]
+ *   T4 = tax on (prior year income WITHOUT arrear)
+ *   Relief = (T1 − T2) − (T3 − T4), floored at 0
+ */
+function computeRelief89(
+  input: IndiaInput,
+  regime: 'old' | 'new',
+  currentTaxableIncome: number,
+  brackets: TaxBracket[],
+  surchargeSlabs: SurchargeSlot[],
+  cessRate: number
+): number {
+  const arrear = positiveOrZero(nvl(input.arrearSalary));
+  if (arrear <= 0) return 0;
+
+  function taxOnIncome(income: number): number {
+    const ti = positiveOrZero(income);
+    const { totalTax: slab } = calculateBracketTax(ti, brackets);
+    const surchargeRate = getSurchargeRate(ti, surchargeSlabs);
+    const surcharge = slab * surchargeRate;
+    const cess = (slab + surcharge) * cessRate;
+    return slab + surcharge + cess;
+  }
+
+  const T1 = taxOnIncome(currentTaxableIncome);                          // with arrear (current)
+  const T2 = taxOnIncome(positiveOrZero(currentTaxableIncome - arrear)); // without arrear (current)
+
+  const priorIncome = currentTaxableIncome * 0.85; // simplified prior-year base
+  const T3 = taxOnIncome(priorIncome + arrear);    // prior year WITH arrear
+  const T4 = taxOnIncome(priorIncome);             // prior year WITHOUT arrear
+
+  return positiveOrZero((T1 - T2) - (T3 - T4));
+}
+
+// ─── AMT u/s 115JC ───────────────────────────────────────────────────────────
+
+/**
+ * Alternative Minimum Tax under Section 115JC for individuals.
+ * Applicable when the taxpayer claims deductions under 10AA, 80H–80RRB, 35AD, etc.
+ * Simplified applicability: flag amtApplicable = true, or if total deductions > 20% of gross income
+ * AND taxable income < adjusted total income.
+ *
+ * AMT rate: 18.5% + surcharge + 4% cess on adjusted total income.
+ * If AMT > regular tax → pay AMT instead.
+ */
+function computeAMT115JC(
+  input: IndiaInput,
+  regime: 'old' | 'new',
+  regularTax: number,
+  normalGTI: number,
+  totalDeductions: number,
+  surchargeSlabs: SurchargeSlot[],
+  cessRate: number
+): number {
+  const AMT_RATE = 0.185;
+
+  // Determine adjusted total income
+  const adjustedIncome = positiveOrZero(
+    nvl(input.amtAdjustedIncome) > 0 ? nvl(input.amtAdjustedIncome) : normalGTI
+  );
+
+  // Check applicability
+  const deductionRatio = normalGTI > 0 ? totalDeductions / normalGTI : 0;
+  const isApplicable =
+    input.amtApplicable === true ||
+    (regime === 'old' && deductionRatio > 0.20 && adjustedIncome > normalGTI - totalDeductions);
+
+  if (!isApplicable) return 0;
+
+  const amtBase = AMT_RATE * adjustedIncome;
+  const surchargeRate = getSurchargeRate(adjustedIncome, surchargeSlabs);
+  const amtSurcharge = amtBase * surchargeRate;
+  const amtCess = (amtBase + amtSurcharge) * cessRate;
+  const amtTotal = Math.round(amtBase + amtSurcharge + amtCess);
+
+  // AMT liability = excess over regular tax (if AMT is higher)
+  return positiveOrZero(amtTotal - regularTax);
+}
+
 // ─── Core single-regime calculator ───────────────────────────────────────────
 
 function calcForRegime(input: IndiaInput, regime: 'old' | 'new'): TaxResult {
@@ -759,7 +846,6 @@ function calcForRegime(input: IndiaInput, regime: 'old' | 'new'): TaxResult {
   const lotteryTax = cgResult.lotteryAmount * indiaSlabs.capitalGains.lotteryRate;
 
   const specialRateTax = equitySTCGTax + equityLTCGTax + propertyLTCGTax + propertyLTCGNoIdxTax + lotteryTax;
-  const incomeTax = slabTax + specialRateTax;
 
   // ── 12. Section 87A Rebate ────────────────────────────────────────────────
   // Rebate applies on slab tax only; special rate taxes (CG, lottery) are excluded
@@ -804,10 +890,34 @@ function calcForRegime(input: IndiaInput, regime: 'old' | 'new'): TaxResult {
 
   const totalTax = Math.round(taxAfterRebate + surcharge + cess);
 
-  // ── 15. After TDS / Advance Tax ───────────────────────────────────────────
+  // ── 15. Section 89(1) Relief — Arrear Salary ─────────────────────────────
+  const relief89 = computeRelief89(
+    input,
+    regime,
+    taxableIncome,
+    brackets,
+    surchargeSlabs,
+    cessRate
+  );
+  const totalTaxAfterRelief89 = positiveOrZero(Math.round(totalTax - relief89));
+
+  // ── 15b. AMT u/s 115JC ───────────────────────────────────────────────────
+  const amtLiability = computeAMT115JC(
+    input,
+    regime,
+    totalTaxAfterRelief89,
+    normalGTI,
+    totalDeductions,
+    surchargeSlabs,
+    cessRate
+  );
+  // If AMT applies, the effective total tax is regularTax + amtLiability
+  const effectiveTotalTax = totalTaxAfterRelief89 + amtLiability;
+
+  // ── 16. After TDS / Advance Tax ──────────────────────────────────────────
   const tdsDeducted = positiveOrZero(nvl(input.tdsDeducted));
   const advanceTaxPaid = positiveOrZero(nvl(input.advanceTaxPaid));
-  const totalTaxPayable = positiveOrZero(totalTax - tdsDeducted - advanceTaxPaid);
+  const totalTaxPayable = positiveOrZero(effectiveTotalTax - tdsDeducted - advanceTaxPaid);
 
   // ── 16. Advance Tax Schedule ──────────────────────────────────────────────
   const advanceTaxSchedule = buildAdvanceTaxSchedule(totalTaxPayable);
@@ -866,6 +976,12 @@ function calcForRegime(input: IndiaInput, regime: 'old' | 'new'): TaxResult {
   if (cess > 0) {
     breakdown.push({ label: 'Health & Education Cess', amount: Math.round(cess), rate: cessRate, color: '#ec4899' });
   }
+  if (relief89 > 0) {
+    breakdown.push({ label: 'Section 89(1) Relief', amount: -Math.round(relief89), color: '#22c55e' });
+  }
+  if (amtLiability > 0) {
+    breakdown.push({ label: 'AMT u/s 115JC', amount: Math.round(amtLiability), rate: 0.185, color: '#dc2626' });
+  }
 
   // ── 20. Tips ──────────────────────────────────────────────────────────────
   const tips = buildTips(input, regime, taxableIncome, cgResult, marginalRate);
@@ -873,11 +989,11 @@ function calcForRegime(input: IndiaInput, regime: 'old' | 'new'): TaxResult {
   return {
     country: 'IN',
     grossIncome: finalGrossIncome,
-    totalTax,
-    effectiveRate: finalGrossIncome > 0 ? totalTax / finalGrossIncome : 0,
+    totalTax: effectiveTotalTax,
+    effectiveRate: finalGrossIncome > 0 ? effectiveTotalTax / finalGrossIncome : 0,
     marginalRate,
-    netIncome: finalGrossIncome - totalTax,
-    monthlyTakeHome: (finalGrossIncome - totalTax) / 12,
+    netIncome: finalGrossIncome - effectiveTotalTax,
+    monthlyTakeHome: (finalGrossIncome - effectiveTotalTax) / 12,
     breakdown,
     bracketDetails,
     tips,
@@ -894,6 +1010,8 @@ function calcForRegime(input: IndiaInput, regime: 'old' | 'new'): TaxResult {
     advanceTaxSchedule,
     itrFormRecommended,
     totalTaxPayable,
+    relief89: relief89 > 0 ? Math.round(relief89) : undefined,
+    amtLiability: amtLiability > 0 ? Math.round(amtLiability) : undefined,
   };
 }
 

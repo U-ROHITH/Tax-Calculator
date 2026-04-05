@@ -7,6 +7,8 @@ import { formatByCurrency } from '@/lib/formatters';
 
 interface Props {
   onResult: (result: TaxResult | null) => void;
+  onInputChange?: (input: Partial<IndiaInput>) => void;
+  initialValues?: Partial<IndiaInput>;
 }
 
 function Section({
@@ -92,7 +94,7 @@ function SegmentControl<T extends string>({
   );
 }
 
-export default function IndiaForm({ onResult }: Props) {
+export default function IndiaForm({ onResult, onInputChange, initialValues }: Props) {
   const [form, setForm] = useState<Partial<IndiaInput>>({
     country: 'IN',
     regime: 'auto',
@@ -100,7 +102,14 @@ export default function IndiaForm({ onResult }: Props) {
     metroCity: true,
     businessType: 'none',
     digitalReceipts44AD: false,
+    ...initialValues,
   });
+
+  useEffect(() => {
+    if (initialValues && Object.keys(initialValues).length > 0) {
+      setForm((prev) => ({ ...prev, ...initialValues }));
+    }
+  }, [initialValues]);
 
   const set = useCallback(<K extends keyof IndiaInput>(field: K, value: IndiaInput[K]) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -129,6 +138,10 @@ export default function IndiaForm({ onResult }: Props) {
     const t = setTimeout(calculate, 350);
     return () => clearTimeout(t);
   }, [calculate]);
+
+  useEffect(() => {
+    if (onInputChange) onInputChange(form);
+  }, [form, onInputChange]);
 
   const isOldOrAuto = form.regime === 'old' || form.regime === 'auto';
 
@@ -409,6 +422,81 @@ export default function IndiaForm({ onResult }: Props) {
           </div>
         </Section>
       )}
+
+      {/* Advanced — ESOP */}
+      <Section title="Advanced — ESOP">
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="ESOP Perquisite Value" hint="Market value at exercise minus exercise price × shares. Taxable as salary.">
+            <NumberInput value={form.esopPerquisite} onChange={(v) => set('esopPerquisite', v)} prefix="₹" placeholder="e.g. 500000" />
+          </Field>
+          <Field label="ESOP Subsequent Gain Type">
+            <SegmentControl
+              value={(form.esopSubsequentGain?.[0]?.gainType ?? 'short') as 'short' | 'long'}
+              options={[{ value: 'short', label: 'Short-term' }, { value: 'long', label: 'Long-term' }]}
+              onChange={(v) => {
+                const existing = form.esopSubsequentGain?.[0];
+                set('esopSubsequentGain', [{ gainType: v, amount: existing?.amount ?? 0 }]);
+              }}
+            />
+          </Field>
+        </div>
+        <Field label="ESOP Subsequent Gain Amount" hint="Gain on sale: sale price minus FMV at exercise">
+          <NumberInput
+            value={form.esopSubsequentGain?.[0]?.amount}
+            onChange={(v) => {
+              const gainType = form.esopSubsequentGain?.[0]?.gainType ?? 'short';
+              set('esopSubsequentGain', [{ gainType, amount: v }]);
+            }}
+            prefix="₹"
+            placeholder="0"
+          />
+        </Field>
+      </Section>
+
+      {/* Advanced — Other Income */}
+      <Section title="Advanced — Other Income">
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Gift Received (from non-relative)" hint="Gifts above ₹50,000 from non-relatives are fully taxable as other sources (Section 56(2)(x))">
+            <NumberInput value={form.giftReceived} onChange={(v) => set('giftReceived', v)} prefix="₹" placeholder="e.g. 100000" />
+          </Field>
+          <Field label="Minor Child Income (total)" hint="Income of minor children clubbed with parent. ₹1,500 per child is exempt (Section 64(1A))">
+            <NumberInput value={form.minorChildIncome} onChange={(v) => set('minorChildIncome', v)} prefix="₹" placeholder="0" />
+          </Field>
+        </div>
+        <Field label="Gift from Relative (Exempt)" hint="If from spouse, parents, siblings, etc. — fully exempt regardless of amount">
+          <label className="flex items-center gap-2 text-xs text-[var(--text-secondary)] cursor-pointer">
+            <input
+              type="checkbox"
+              checked={!!form.giftFromRelative}
+              onChange={(e) => set('giftFromRelative', e.target.checked)}
+              className="rounded"
+            />
+            Gift from relative (exempt)
+          </label>
+        </Field>
+      </Section>
+
+      {/* Advanced — Business (Section 50C / 80-IAC) */}
+      <Section title="Advanced — Business (Section 50C / 80-IAC)">
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Property Sale — Stamp Duty Value (Section 50C)" hint="If stamp duty value exceeds sale price, capital gain is computed on stamp duty value">
+            <NumberInput
+              value={form.capitalGains?.find((g) => g.assetType === 'property')?.stampDutyValue}
+              onChange={(v) => {
+                const existing = form.capitalGains?.find((g) => g.assetType === 'property' && g.gainType === 'long');
+                const others = (form.capitalGains || []).filter((g) => !(g.assetType === 'property' && g.gainType === 'long'));
+                const updated = { assetType: 'property' as const, gainType: 'long' as const, amount: existing?.amount ?? 0, stampDutyValue: v };
+                set('capitalGains', [...others, updated]);
+              }}
+              prefix="₹"
+              placeholder="0"
+            />
+          </Field>
+          <Field label="Startup Tax Holiday (80-IAC)" hint="Eligible startup profit deduction (100% for 3 consecutive years of first 10). Requires DPIIT certificate.">
+            <NumberInput value={form.section80IAC} onChange={(v) => set('section80IAC', v)} prefix="₹" placeholder="0" />
+          </Field>
+        </div>
+      </Section>
 
       {/* TDS / Advance Tax */}
       <Section title="TDS & Advance Tax">
