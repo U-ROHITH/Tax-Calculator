@@ -704,7 +704,212 @@ Build + push.
 
 ---
 
+## v6 — Corporate Redesign + AI Switch + New Pages (DONE)
+
+### ✅ M40 — Tax Glossary (`/glossary`) **Pushed ✓**
+- 50+ terms defined in `content/glossary/terms.ts`
+- Alphabetical index, search filter, category badges
+- `app/glossary/page.tsx` is a server component (no separate component file needed)
+
+### ✅ M41 — Retirement Planning Calculator (`/retire`) **Pushed ✓**
+- `components/retire/RetirementCalculator.tsx`
+- India + US retirement corpus calculator
+- SIP projection, NPS/EPF/PPF breakdown, withdrawal phase
+
+### ✅ M42 — India Salary Slip Generator (`/salary-slip`) **Pushed ✓**
+- `components/salary/SalarySlipGenerator.tsx`
+- CTC → take-home breakdown: Basic, HRA, DA, allowances, PF, PT, TDS
+- Print-quality salary slip output
+
+### ✅ M43 — India Income Tax Slab History (`/slab-history`) **Pushed ✓**
+- `components/slab-history/SlabHistoryPage.tsx`
+- `content/slabs/india-history.ts` — data for FY 2017-18 through 2025-26
+- Side-by-side old/new regime comparison by year, interactive year selector
+
+### ✅ M44 — NRI Tax Calculator India (`/nri`) **Pushed ✓**
+- `components/nri/NRICalculator.tsx`
+- Income accrued in India: salary, rental, interest, LTCG/STCG equity + property
+- DTAA country selector with per-country notes (UAE, US, UK, others)
+- TDS credit, tax payable, effective rate
+- New regime only (NRIs cannot use old regime from FY 2024-25)
+
+### ✅ M45 — HUF Tax Calculator (`/plan` tab or standalone) **Pushed ✓**
+- `components/planning/HUFSplitting.tsx`
+- Family income split through HUF entity
+- Shows combined tax saving with CA disclaimer
+
+### ✅ M46 — UK Tax Calculator Enhancements **Pushed ✓**
+- Extended income heads, improved NI calculation, marriage allowance UI
+
+### ✅ M47 — US State Tax Calculator **Pushed ✓**
+- State dropdown included in US calculator results
+
+### ✅ M48 — India Section 44AD/44ADA Calculator **Pushed ✓**
+- Presumptive taxation UI within India calculator
+
+### ✅ M49 — AI Assistant switched to Google Gemini **Pushed ✓**
+- `app/api/tax-assistant/route.ts` — now uses `@google/generative-ai`
+- Model: `gemini-1.5-flash` with streaming
+- API key: `process.env.GOOGLE_AI_API_KEY` in `.env.local` (gitignored, never commit)
+- `components/assistant/TaxAssistant.tsx` — Bloomberg-meets-ChatGPT split layout
+  - Left sidebar (240px): country selector + suggested questions per country
+  - Right: streaming chat, typing indicator, markdown renderer (no external deps)
+  - Character counter (500 limit), Shift+Enter for newlines
+  - Disclaimer banner, empty state with suggestion chips
+
+### ✅ M50 — Corporate Homepage Redesign **Pushed ✓**
+- `app/page.tsx` — 470-line psychologically optimised landing page
+- Dark luxury fintech aesthetic with `.grid-pattern` hero
+- Sections: hero (loss aversion) → stats bar → FOMO band → country cards → CA comparison table → trust anchors → testimonials → tools grid → blog preview → CTA
+- Country cards: left-border accent, actual section references (§80C, §199A, TCGA 1992)
+- No emojis, Lucide icons only, all CSS token colours
+
+### ✅ M51 — Header Corporate Redesign **Pushed ✓**
+- `components/shared/Header.tsx` — full rebuild
+- Calculator dropdown (India/US/UK with descriptions)
+- Tools dropdown (2-col grid: Compare, Plan, Carry Forward, Checklist, Crypto, NRI, Freelancer)
+- Amber trust bar: "AY 2025-26 · filing open · deadline July 31 2025" — dismissible via sessionStorage
+- Sticky + `backdrop-blur`, scroll shadow via `.scrolled` class
+- Mobile hamburger drawer with accordion sections
+- Sun/Moon dark mode toggle (hydration-safe)
+
+### ✅ M52 — Pricing Page Psychology Rebuild **Pushed ✓**
+- `components/pricing/PricingPage.tsx`
+- 7 psychological tactics: anchoring (CA Connect first), decoy effect, loss framing, social proof, scarcity, risk reversal, cost comparison
+- Annual/Monthly toggle (defaults Annual), Pro card elevated with `lg:scale-105`
+- "Most Popular · Best Value" floating badge, 30-day guarantee
+- 5-question FAQ accordion, 4 trust badges
+- CA Connect: "Coming Soon" — no payment integration needed
+
+### ✅ M53 — Blog Magazine Rebuild **Pushed ✓**
+- `lib/blog-data.ts` — canonical data source for all 6 articles
+- `components/blog/BlogIndexClient.tsx` — magazine layout, sticky sidebar, live ITR deadline countdown, newsletter UI, search filter, category tag cloud
+- `components/blog/ArticleToC.tsx` — sticky ToC with IntersectionObserver active heading
+- `components/blog/ShareButtons.tsx` — inline SVG for X + LinkedIn (Lucide doesn't ship these)
+- `app/blog/[slug]/page.tsx` — clean reading layout, embedded "Try the Calculator" CTA
+- Article slugs:
+  - `/blog/old-vs-new-regime-2025`
+  - `/blog/hra-exemption-calculator`
+  - `/blog/ltcg-budget-2024`
+  - `/blog/us-freelancer-tax-guide`
+  - `/blog/uk-60-percent-tax-trap`
+  - `/blog/which-itr-form-to-file`
+- **Note:** `/blog/file-itr-guide` does NOT exist — correct slug is `which-itr-form-to-file`
+
+### ✅ M54 — LTCG Tax Harvesting Tool (`/harvest`) **Pushed ✓**
+- `components/planning/HarvestingTool.tsx`
+- India LTCG ₹1.25L annual exemption optimizer
+- Shows optimal sell/rebuy timing to reset cost basis
+
+### ✅ M55 — Tax Calendar (`/calendar`) **Pushed ✓**
+- `app/calendar/TaxCalendar.tsx`
+- India advance tax dates, ITR deadlines, TDS due dates
+- GST return calendar
+
+---
+
+## Current Tech Stack (as of M55)
+
+- **Framework:** Next.js (App Router, TypeScript)
+- **AI:** Google Gemini (`gemini-1.5-flash`) via `@google/generative-ai`
+  - Key: `process.env.GOOGLE_AI_API_KEY` — in `.env.local` only, never commit
+  - Route: `app/api/tax-assistant/route.ts`
+  - Notice draft: `app/api/notice-draft/route.ts` (check if built)
+- **Icons:** Lucide React only — no emojis anywhere
+- **Design tokens:** `app/globals.css` — `--primary`, `--surface`, `--border`, `--text-primary`, `--text-secondary`, `--text-muted`, `--india`, `--us`, `--uk`, `--success`, `--warning`, `--danger`
+- **Blog data:** `lib/blog-data.ts`
+- **Glossary data:** `content/glossary/terms.ts`
+- **Slab history:** `content/slabs/india-history.ts`
+- **Tests:** `engine/__tests__/` — vitest, must stay green (`npm run test`)
+- **Build:** must always exit 0 (`npm run build`)
+
+## All Active Routes (as of M55)
+
+| Route | Component | Status |
+|-------|-----------|--------|
+| `/` | `app/page.tsx` | Done |
+| `/in` | India Calculator | Done |
+| `/us` | US Calculator | Done |
+| `/uk` | UK Calculator | Done |
+| `/compare` | Compare page | Done |
+| `/plan` | Planning tools (4 tabs) | Done |
+| `/carryforward` | Loss carry-forward tracker | Done |
+| `/checklist` | Document checklist + AIS guide | Done |
+| `/assistant` | AI Tax Assistant (Gemini) | Done |
+| `/upload` | Form 16 / AIS PDF parser | Done (verify component) |
+| `/notice` | Notice Response Generator | Done (verify component) |
+| `/gst` | GST Calculator | Done |
+| `/tds` | TDS Calculator | Done |
+| `/freelancer` | US Freelancer Calculator | Done |
+| `/crypto` | Crypto Tax Module | Done |
+| `/student` | US Student / F1 Visa | Done |
+| `/blog` | Blog index | Done |
+| `/blog/[slug]` | Article page | Done |
+| `/pricing` | Pricing page | Done |
+| `/retire` | Retirement calculator | Done |
+| `/salary-slip` | India Salary Slip | Done |
+| `/slab-history` | India slab history | Done |
+| `/nri` | NRI Tax Calculator | Done |
+| `/harvest` | LTCG harvesting tool | Done |
+| `/calendar` | Tax calendar | Done |
+| `/glossary` | Tax glossary (50+ terms) | Done |
+
+## What Still Needs To Be Built
+
+### 🔲 M56 — Engine: Section 50C, 56(2)(x), ESOP, Clubbing, Foreign Tax Credit
+Expand `engine/india.ts` and `engine/types.ts`:
+- Section 50C: property sale below stamp duty value → deemed CG on stamp duty value
+- Section 56(2)(x): gifts > ₹50K from non-relatives → taxable as other sources
+- ESOP perquisite: (FMV on exercise − exercise price) × shares → salary perquisite
+- ESOP subsequent CG: sale price − FMV on exercise → STCG/LTCG by holding period
+- Clubbing: minor child income (₹1,500 exemption per child) added to parent
+- Foreign tax credit: foreign tax paid credited against Indian tax on same income
+- Section 80-IAC: startup tax holiday (100% deduction, 3 of first 10 years)
+Add tests for each. Build + push.
+
+### 🔲 M57 — Notice Response Generator UI (`/notice`)
+Verify `app/notice/page.tsx` and its component are complete.
+- User inputs: notice type (143(1)/143(2)/148/245/271), their situation
+- Calls `app/api/notice-draft/route.ts` (must use `GOOGLE_AI_API_KEY`, not Anthropic)
+- Shows: what the notice means, action needed, draft reply letter
+- Proper legal language, section references, 30-day reminder
+If component missing or incomplete, rebuild it.
+
+### 🔲 M58 — Form 16 / AIS PDF Upload (`/upload`)
+Verify `app/upload/page.tsx` and its component are complete.
+- Upload Form 16 PDF → extract: gross salary, TDS, HRA, 80C investments
+- Upload AIS PDF → extract: interest, dividends, property transactions
+- Auto-fill India calculator with extracted values
+- Show confidence indicators on each extracted field
+- Use `pdf-parse` package for text extraction + regex patterns
+If component missing or incomplete, rebuild it.
+
+### 🔲 M59 — SEO & Performance Pass
+- Add `generateMetadata` to all route pages that are missing it
+- Add `sitemap.ts` entries for all new routes
+- Verify Open Graph tags on homepage and blog articles
+- Add `robots.txt` if missing
+- Check for any `console.log` statements left in production code
+
+### 🔲 M60 — Add 6 more blog articles (SEO expansion)
+New articles needed (add to `lib/blog-data.ts`):
+1. "NRI Tax Guide India 2025-26 — What's Taxable, DTAA, TDS Rates"
+2. "How to Save Tax with NPS — Section 80CCD(1B) Extra ₹50,000 Deduction"
+3. "Crypto Tax India 2025 — Section 115BBH, 30% Flat, 1% TDS Rules"
+4. "US vs India Tax — Which Country Taxes You More?"
+5. "Capital Gains Tax UK 2025-26 — CGT Rates, Annual Exempt Amount, Reporting"
+6. "How to File ITR-2 — Step-by-Step for Capital Gains and Multiple Income Sources"
+
+---
+
 ## Commit Convention
+
+```
+milestone: M56 — engine: Section 50C, 56(2)(x), ESOP, clubbing
+milestone: M57 — notice response generator UI complete
+```
+
+## Run Commands
 
 ```
 milestone: M13 — design system rebuild
