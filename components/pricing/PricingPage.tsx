@@ -162,7 +162,7 @@ const FAQ_ITEMS = [
   {
     question: 'When will Pro launch, and will my early-bird price be locked in?',
     answer:
-      'Pro is currently in final development. Users who join the waitlist will receive the early-bird rate of ₹499/month locked in for 12 months — even after the regular price rises to ₹999/month. No credit card required to reserve your spot.',
+      'Pro is currently in final development. Users who join the waitlist will receive the early-bird rate of $6/month locked in for 12 months — even after the regular price rises. No credit card required to reserve your spot.',
   },
   {
     question: 'What exactly does the AI Tax Assistant do?',
@@ -172,7 +172,7 @@ const FAQ_ITEMS = [
   {
     question: 'How does the Notice Response Generator work?',
     answer:
-      'Upload your Income Tax Department notice. The tool identifies the notice type (143(1), 139(9), 148, etc.), drafts a point-by-point response in the correct format, and explains the compliance steps. A feature that CAs typically charge ₹2,000–5,000 per response for.',
+      'Upload your Income Tax Department notice. The tool identifies the notice type (143(1), 139(9), 148, etc.), drafts a point-by-point response in the correct format, and explains the compliance steps. A feature that advisors typically charge $75–200 per response for.',
   },
   {
     question: 'Is there a free trial? What if I am not satisfied?',
@@ -182,7 +182,7 @@ const FAQ_ITEMS = [
   {
     question: 'What is CA Connect and why is it separate from Pro?',
     answer:
-      'CA Connect is for genuinely complex situations: business restructuring, transfer pricing, FEMA/RBI compliance, or when you need a CA signature on a notice response. It is priced per consultation (₹2,999) because it involves a verified, licensed Chartered Accountant reviewing your actual documents. Pro handles everything a typical salaried or freelance taxpayer needs without a CA.',
+      'CA Connect is for genuinely complex situations: business restructuring, transfer pricing, FEMA/RBI compliance, or when you need a CA signature on a notice response. It is priced per consultation ($35) because it involves a verified, licensed Chartered Accountant reviewing your actual documents. Pro handles everything a typical salaried or freelance taxpayer needs without a CA.',
   },
 ];
 
@@ -208,10 +208,10 @@ export default function PricingPage() {
           </div>
 
           <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-3 tracking-tight">
-            Replace your CA bill with software
+            Replace your accountant bill with software
           </h1>
           <p className="text-[var(--text-secondary)] text-base max-w-xl mx-auto">
-            One CA consultation costs ₹3,000–₹15,000. Our annual Pro plan is ₹4,788 — and covers
+            One CA consultation costs $150–$500. Our annual Pro plan is $59 — and covers
             unlimited questions, AI-powered notice handling, and document auto-fill year-round.
           </p>
         </div>
@@ -241,7 +241,7 @@ export default function PricingPage() {
             >
               Annual
               <span className="px-1.5 py-0.5 text-xs font-semibold bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/20 rounded">
-                Save 20%
+                Save 17%
               </span>
             </button>
           </div>
@@ -265,7 +265,7 @@ export default function PricingPage() {
               </p>
               <div>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-bold text-[var(--text-primary)] num">₹2,999</span>
+                  <span className="text-3xl font-bold text-[var(--text-primary)] num">$35</span>
                   <span className="text-sm text-[var(--text-muted)]">/consultation</span>
                 </div>
                 <p className="text-xs text-[var(--text-muted)] mt-0.5">
@@ -326,22 +326,22 @@ export default function PricingPage() {
               <div>
                 <div className="flex items-baseline gap-1.5">
                   <span className="text-3xl font-bold text-[var(--text-primary)] num">
-                    {isAnnual ? '₹399' : '₹499'}
+                    {isAnnual ? '$5' : '$6'}
                   </span>
                   <span className="text-sm text-[var(--text-muted)]">/month</span>
                   {/* Strikethrough regular price to reinforce scarcity */}
                   {!isAnnual && (
-                    <span className="text-sm text-[var(--text-muted)] line-through ml-1 num">₹999</span>
+                    <span className="text-sm text-[var(--text-muted)] line-through ml-1 num">$10</span>
                   )}
                 </div>
 
                 {isAnnual ? (
                   <p className="text-xs text-[var(--text-muted)] mt-0.5 num">
-                    Billed ₹4,788/yr · saves ₹1,200 vs monthly
+                    Billed $59/yr · saves 17% vs monthly
                   </p>
                 ) : (
                   <p className="text-xs text-[var(--warning)] mt-0.5 font-medium">
-                    Regular price ₹999/mo — limited-time early-bird rate
+                    Billed monthly · save 17% with annual plan
                   </p>
                 )}
               </div>
@@ -350,7 +350,7 @@ export default function PricingPage() {
               <div className="mt-3 flex items-start gap-2 p-2.5 bg-[var(--danger)]/6 border border-[var(--danger)]/15 rounded-lg">
                 <AlertTriangle className="h-3.5 w-3.5 text-[var(--danger)] mt-0.5 shrink-0" />
                 <p className="text-xs text-[var(--danger)] leading-snug">
-                  Without Pro, you&apos;re missing AI-powered notice handling worth ₹5,000+ per response.
+                  Without Pro, you&apos;re missing AI-powered notice handling worth $100+ per response.
                 </p>
               </div>
             </div>
@@ -396,7 +396,7 @@ export default function PricingPage() {
                 All calculators, planning tools, and glossary. No account required.
               </p>
               <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-bold text-[var(--text-primary)] num">₹0</span>
+                <span className="text-3xl font-bold text-[var(--text-primary)] num">$0</span>
                 <span className="text-sm text-[var(--text-muted)]">/ always free</span>
               </div>
             </div>
@@ -461,21 +461,21 @@ export default function PricingPage() {
               <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide mb-1">
                 1 CA Consultation
               </p>
-              <p className="text-2xl font-bold text-[var(--danger)] num">₹3,000–15,000</p>
-              <p className="text-xs text-[var(--text-muted)] mt-1">Per session · varies by CA</p>
+              <p className="text-2xl font-bold text-[var(--danger)] num">$150–$500</p>
+              <p className="text-xs text-[var(--text-muted)] mt-1">Per session · varies by advisor</p>
             </div>
             <div className="text-center p-4 rounded-lg bg-[var(--surface-raised)]">
               <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide mb-1">
-                ITR Notice Response
+                Tax Notice Response
               </p>
-              <p className="text-2xl font-bold text-[var(--danger)] num">₹2,000–5,000</p>
-              <p className="text-xs text-[var(--text-muted)] mt-1">Per notice · CA fees</p>
+              <p className="text-2xl font-bold text-[var(--danger)] num">$75–$200</p>
+              <p className="text-xs text-[var(--text-muted)] mt-1">Per notice · professional fees</p>
             </div>
             <div className="text-center p-4 rounded-lg border-2 border-[var(--primary)]/30 bg-[var(--primary)]/5">
               <p className="text-xs font-semibold text-[var(--primary)] uppercase tracking-wide mb-1">
                 TaxCalc Pro · Annual
               </p>
-              <p className="text-2xl font-bold text-[var(--primary)] num">₹4,788</p>
+              <p className="text-2xl font-bold text-[var(--primary)] num">$59</p>
               <p className="text-xs text-[var(--text-muted)] mt-1">Unlimited queries · full year</p>
             </div>
           </div>

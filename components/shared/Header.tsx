@@ -37,35 +37,22 @@ interface DropdownItem {
   description?: string;
 }
 
+// US-only for now — India & UK launching in 6 months
 const CALCULATOR_ITEMS: DropdownItem[] = [
-  {
-    label: 'India Tax Calculator',
-    href: '/in',
-    icon: Calculator,
-    description: 'FY 2025-26 · Old & New Regime',
-  },
   {
     label: 'US Tax Calculator',
     href: '/us',
     icon: Globe,
-    description: 'TY 2025 · Federal + State',
-  },
-  {
-    label: 'UK Tax Calculator',
-    href: '/uk',
-    icon: BarChart2,
-    description: 'TY 2025-26 · PAYE & Self-Assessment',
+    description: 'TY 2025 · Federal + All 50 States',
   },
 ];
 
 const TOOLS_ITEMS: DropdownItem[] = [
-  { label: 'Compare Countries', href: '/compare', icon: ArrowUpDown },
-  { label: 'Tax Planning', href: '/plan', icon: Zap },
-  { label: 'Loss Carry Forward', href: '/carryforward', icon: RefreshCw },
-  { label: 'Document Checklist', href: '/checklist', icon: CheckSquare },
-  { label: 'Crypto Tax', href: '/crypto', icon: Bitcoin },
-  { label: 'NRI Tax Guide', href: '/nri', icon: Users },
   { label: 'Freelancer / SE Tax', href: '/freelancer', icon: Briefcase },
+  { label: 'Crypto Tax', href: '/crypto', icon: Bitcoin },
+  { label: 'Student / F1 Visa', href: '/student', icon: Users },
+  { label: 'Tax Planning', href: '/plan', icon: Zap },
+  { label: 'AI Tax Assistant', href: '/assistant', icon: FileText },
 ];
 
 const SIMPLE_LINKS = [
@@ -82,12 +69,12 @@ function TrustBar({ onDismiss }: { onDismiss: () => void }) {
     <div className="trust-bar relative flex items-center justify-center gap-2 px-4 py-2 text-xs font-medium">
       <span className="trust-bar-dot" />
       <span className="trust-bar-text">
-        AY 2025-26 · Income Tax filing open · Deadline: July 31, 2025 ·{' '}
+        Tax Year 2025 · US federal filing deadline April 15, 2025 ·{' '}
         <Link
-          href="/blog/file-itr-guide"
+          href="/blog/us-tax-brackets-2025"
           className="trust-bar-link underline underline-offset-2"
         >
-          File ITR Guide
+          2025 Tax Brackets Guide
           <ArrowRight className="inline-block h-3 w-3 ml-0.5 -mt-px" />
         </Link>
       </span>

@@ -411,18 +411,18 @@ export default function HomePage() {
           <div className="mt-10 flex flex-wrap justify-center gap-3">
             <Link
               href="/in"
-              className="group inline-flex items-center gap-2 rounded-xl bg-[var(--primary)] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--primary)]/20 transition-all hover:bg-[var(--primary-hover)] hover:shadow-[var(--primary)]/30 hover:-translate-y-0.5"
+              className="group inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--primary)]/20 transition-all hover:bg-[var(--primary-hover)] hover:shadow-[var(--primary)]/30 hover:-translate-y-0.5"
             >
               Calculate My Tax
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
-            <Link
-              href="/compare"
-              className="inline-flex items-center gap-2 rounded-xl border border-[var(--border-strong)] bg-transparent px-6 py-3 text-sm font-semibold text-[var(--text-primary)] transition-all hover:bg-[var(--surface-raised)] hover:border-[var(--text-muted)]"
+            <a
+              href="#countries"
+              className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-[var(--border-strong)] bg-transparent px-6 py-3 text-sm font-semibold text-[var(--text-primary)] transition-all hover:bg-[var(--surface-raised)] hover:border-[var(--text-muted)]"
             >
               <ArrowUpDown className="h-4 w-4 text-[var(--text-muted)]" />
-              Compare Countries
-            </Link>
+              Choose Country
+            </a>
           </div>
 
           {/* Start in 90 seconds — process visual */}
@@ -494,7 +494,7 @@ export default function HomePage() {
       {/* ══════════════════════════════════════════════════════════════════════
           COUNTRY CARDS — Authority signals + section references
       ══════════════════════════════════════════════════════════════════════ */}
-      <section className="mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+      <section id="countries" className="mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
           <h2 className="text-3xl font-bold tracking-tight text-[var(--text-primary)] sm:text-4xl">
             Three jurisdictions. Every deduction.
@@ -554,7 +554,7 @@ export default function HomePage() {
                   className="group/btn inline-flex w-full items-center justify-center gap-2 rounded-xl py-2.5 px-4 text-sm font-semibold text-white transition-all hover:opacity-90 hover:shadow-md"
                   style={{ backgroundColor: card.accentColor }}
                 >
-                  Open {card.name} Calculator
+                  Calculate {card.name} Tax
                   <ChevronRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-0.5" />
                 </Link>
               </div>

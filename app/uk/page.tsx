@@ -1,63 +1,67 @@
+// UK Calculator is preserved in components/calculator/UKCalculator.tsx — launching in ~6 months
 import type { Metadata } from 'next';
-import UKCalculator from '@/components/calculator/UKCalculator';
+import Link from 'next/link';
+import { Clock, ArrowRight, Calculator } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'UK Income Tax Calculator 2025-26 — PAYE, NI & Scotland',
-  description:
-    'Free UK income tax calculator for TY 2025-26. Calculate PAYE tax for England, Wales, NI and Scotland. Includes National Insurance, student loan repayments, and the 60% Personal Allowance trap.',
-  keywords: [
-    'income tax calculator UK',
-    'PAYE calculator 2025',
-    'tax calculator Scotland',
-    'National Insurance calculator',
-    'personal allowance taper calculator',
-    'student loan repayment calculator UK',
-  ],
-  openGraph: {
-    title: 'UK Income Tax Calculator 2025-26',
-    description: 'England & Scotland bands, NI, student loans. Includes the 60% PA trap warning.',
-  },
-};
-
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: [
-    {
-      '@type': 'Question',
-      name: 'What is the personal allowance for 2025-26 in the UK?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'The personal allowance for 2025-26 is £12,570. It tapers by £1 for every £2 of income above £100,000 and is fully withdrawn at £125,140.',
-      },
-    },
-    {
-      '@type': 'Question',
-      name: 'What is the 60% tax trap in the UK?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'Between £100,000 and £125,140, you lose £1 of personal allowance for every £2 earned. This means you effectively pay 60% marginal tax (40% income tax + 20% on the lost allowance). Consider pension contributions to bring income below £100,000.',
-      },
-    },
-    {
-      '@type': 'Question',
-      name: 'What are the Scottish income tax rates for 2025-26?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'Scotland has 6 bands: Starter 19% (£12,571-£14,876), Basic 20% (£14,877-£26,561), Intermediate 21% (£26,562-£43,662), Higher 42% (£43,663-£75,000), Advanced 45% (£75,001-£125,140), Top 48% (above £125,140).',
-      },
-    },
-  ],
+  title: 'UK Tax Calculator — Coming Soon | TaxCalc Global',
+  description: 'UK Self Assessment tax calculator is coming soon. Try our US tax calculator today.',
 };
 
 export default function UKPage() {
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <UKCalculator />
-    </>
+    <div className="min-h-[80vh] flex items-center justify-center px-4">
+      <div className="max-w-lg w-full text-center space-y-6">
+        <div className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-4 py-1.5 text-sm font-medium text-[var(--text-secondary)]">
+          <Clock className="h-4 w-4" />
+          Launching in ~6 months
+        </div>
+
+        <div>
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-3">
+            UK Tax Calculator
+          </h1>
+          <p className="text-[var(--text-muted)] leading-relaxed">
+            We are building a complete UK Self Assessment calculator covering income tax,
+            National Insurance, capital gains, and all HMRC reliefs. Coming soon.
+          </p>
+        </div>
+
+        <div className="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-5 text-left space-y-3">
+          <p className="text-sm font-semibold text-[var(--text-primary)]">What will be included:</p>
+          <ul className="space-y-2 text-sm text-[var(--text-secondary)]">
+            {[
+              'England/Wales and Scotland income tax bands',
+              'National Insurance: Class 1, 2, and 4',
+              'Capital Gains Tax: 18%/24% property, 10%/18% other assets',
+              'Personal Allowance taper (60% trap above £100K)',
+              'Marriage Allowance, Pension Annual Allowance, ISA guide',
+            ].map((item) => (
+              <li key={item} className="flex items-start gap-2">
+                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[var(--uk)] flex-shrink-0" />
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <Link
+            href="/us"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-[var(--primary)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+          >
+            <Calculator className="h-4 w-4" />
+            Try US Tax Calculator
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+          <Link
+            href="/"
+            className="inline-flex items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-5 py-2.5 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+          >
+            Back to Home
+          </Link>
+        </div>
+      </div>
+    </div>
   );
 }
