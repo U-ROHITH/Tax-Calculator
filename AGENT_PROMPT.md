@@ -625,7 +625,7 @@ Standalone calculator. No modification to existing engines.
 - India-specific: 1% TDS u/s 194S on crypto sale > ₹50K (₹10K for non-exchange)
 Build + push.
 
-### 🔲 M32 — Student / F1 Visa Mode (`/student`)
+### ✅ M32 — Student / F1 Visa Mode (`/student`) — DONE **Pushed ✓**
 Simple mode for international students in the US on F1/J1 visas.
 - "Do I need to file?" decision tree: presence test, income threshold ($5 if treaty country, $13,850 general)
 - F1 visa holders: FICA exempt for first 5 years; claim treaty benefits
