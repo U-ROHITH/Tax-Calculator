@@ -3,22 +3,15 @@ import Link from 'next/link';
 import type { LucideIcon } from 'lucide-react';
 import {
   ArrowRight,
-  Calculator,
   Globe,
-  BarChart2,
   ArrowUpDown,
   TrendingUp,
   Briefcase,
   GraduationCap,
   Bot,
-  FileWarning,
   Zap,
-  RefreshCw,
-  CheckSquare,
   Calendar,
-  Receipt,
   Building,
-  Upload,
   Check,
   Shield,
   Lock,
@@ -32,9 +25,9 @@ import {
 import { blogArticles } from '@/lib/blog-data';
 
 export const metadata: Metadata = {
-  title: 'TaxCalc Global — Know Your Tax. Keep Your Money.',
+  title: 'TaxCalc Global — US Tax Calculator 2025',
   description:
-    'India ITR · US Form 1040 · UK Self Assessment. CA-grade tax calculations free forever. Old/new regime, 87A rebate, 80C-80U, AMT, QBI, CGT — every deduction, every income head.',
+    'Free US federal and state income tax calculator for Tax Year 2025. AMT, QBI deduction, EITC, capital gains, SE tax, all 50 states. No login required.',
 };
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -152,34 +145,10 @@ const COUNTRY_CARDS: CountryCard[] = [
 
 const FEATURE_CARDS: FeatureCard[] = [
   {
-    icon: Calculator,
-    title: 'India Tax Calculator',
-    description: 'Old/new regime, all income heads, 80C-80U, advance tax schedule',
-    href: '/in',
-  },
-  {
     icon: Globe,
     title: 'US Tax Calculator',
-    description: 'Form 1040, 15 states, AMT, EITC, QBI deduction, LTCG rates',
+    description: 'Form 1040, all 50 states, AMT, EITC, QBI deduction, LTCG rates',
     href: '/us',
-  },
-  {
-    icon: BarChart2,
-    title: 'UK Tax Calculator',
-    description: 'Scotland/E&W bands, PA taper trap, CGT, Class 4 NI',
-    href: '/uk',
-  },
-  {
-    icon: ArrowUpDown,
-    title: 'Compare Countries',
-    description: 'India vs US vs UK effective rate, take-home, marginal rate',
-    href: '/compare',
-  },
-  {
-    icon: TrendingUp,
-    title: 'Crypto Tax',
-    description: 'India 30% flat, US STCG/LTCG, UK CGT. Up to 10 trades.',
-    href: '/crypto',
   },
   {
     icon: Briefcase,
@@ -188,66 +157,41 @@ const FEATURE_CARDS: FeatureCard[] = [
     href: '/freelancer',
   },
   {
+    icon: TrendingUp,
+    title: 'Crypto Tax',
+    description: 'US STCG/LTCG rates, wash sale rules. Up to 10 trades.',
+    href: '/crypto',
+  },
+  {
     icon: GraduationCap,
     title: 'Student / F1 Mode',
-    description: 'SPT test, 1040-NR guide, India DTAA treaty benefits',
+    description: 'SPT test, 1040-NR guide, US tax treaty benefits',
     href: '/student',
-  },
-  {
-    icon: Bot,
-    title: 'AI Tax Assistant',
-    description: 'Ask any tax question. Cites actual sections. India/US/UK.',
-    href: '/assistant',
-    badge: 'AI',
-  },
-  {
-    icon: FileWarning,
-    title: 'Notice Response',
-    description: 'Describe your IT notice. Get a draft reply letter.',
-    href: '/notice',
-    badge: 'AI',
   },
   {
     icon: Zap,
     title: 'Tax Planning Tools',
-    description: 'Salary optimizer, LTCG timing, NPS calculator, HUF splitting',
+    description: 'Salary optimizer, LTCG timing, Roth conversion, retirement scenarios',
     href: '/plan',
   },
   {
-    icon: RefreshCw,
-    title: 'Loss Carry-Forward',
-    description: 'Track BF losses across 8 years. See exact tax saved.',
-    href: '/carryforward',
-  },
-  {
-    icon: CheckSquare,
-    title: 'Document Checklist',
-    description: 'Know exactly what to collect before filing. AIS guide.',
-    href: '/checklist',
+    icon: Bot,
+    title: 'AI Tax Assistant',
+    description: 'Ask any US tax question. Cites actual IRC sections.',
+    href: '/assistant',
+    badge: 'AI',
   },
   {
     icon: Calendar,
     title: 'Tax Calendar',
-    description: 'Every deadline for IN/US/UK with countdown and penalty info',
+    description: 'Every IRS and state deadline with countdown and penalty info',
     href: '/calendar',
   },
   {
-    icon: Receipt,
-    title: 'GST Calculator',
-    description: 'CGST/SGST/IGST, reverse charge, composition scheme guide',
-    href: '/gst',
-  },
-  {
     icon: Building,
-    title: 'TDS Calculator',
-    description: 'All 12 sections, PAN impact, threshold reference table',
-    href: '/tds',
-  },
-  {
-    icon: Upload,
-    title: 'Form 16 Upload',
-    description: 'Upload PDF — auto-extract salary, TDS, deductions',
-    href: '/upload',
+    title: 'Retirement Calculator',
+    description: '401(k), IRA, Roth — contribution limits, RMDs, tax impact',
+    href: '/retirement',
   },
 ];
 
@@ -271,24 +215,24 @@ const TRUST_ITEMS: TrustItem[] = [
 
 const COMPARISON_ROWS: ComparisonRow[] = [
   { feature: 'Instant tax estimate', us: true, ca: 'Appointment required' },
-  { feature: 'Old vs New regime comparison', us: true, ca: false },
-  { feature: '87A rebate + marginal relief', us: true, ca: 'Manual' },
-  { feature: 'Section 80C–80U optimizer', us: true, ca: 'Billed hourly' },
-  { feature: 'US AMT + QBI calculation', us: true, ca: false },
-  { feature: 'UK PA taper trap analysis', us: true, ca: false },
-  { feature: 'Cross-country comparison', us: true, ca: 'Rare' },
+  { feature: 'AMT calculation (Form 6251)', us: true, ca: 'Billed hourly' },
+  { feature: 'QBI deduction (§199A) for self-employed', us: true, ca: 'Billed hourly' },
+  { feature: 'EITC eligibility check', us: true, ca: 'Manual' },
+  { feature: 'State income tax (15 states)', us: true, ca: false },
+  { feature: 'SE tax + quarterly estimates', us: true, ca: 'Billed hourly' },
+  { feature: 'PDF export', us: true, ca: false },
   { feature: 'Available at 2 AM', us: true, ca: false },
-  { feature: 'Cost', us: 'Free', ca: '₹3,000–₹15,000+' },
+  { feature: 'Cost', us: 'Free', ca: '$150–$500+' },
 ];
 
 const TESTIMONIALS: Testimonial[] = [
   {
     quote:
-      'I switched from old to new regime after seeing the comparison. Saved ₹61,000 in FY 2024-25. My CA didn\'t even mention this.',
-    author: 'Priya R.',
-    role: 'Software Engineer, Bengaluru',
-    country: 'IN',
-    accentColor: '#D97706',
+      'As a W-2 employee with RSUs and a side business, figuring out AMT was a nightmare. TaxCalc showed me exactly where I stood.',
+    author: 'Alex M.',
+    role: 'Software Engineer, California',
+    country: 'US',
+    accentColor: '#2563EB',
   },
   {
     quote:
@@ -300,11 +244,11 @@ const TESTIMONIALS: Testimonial[] = [
   },
   {
     quote:
-      'Found the £125,140 personal allowance trap myself before my accountant could charge me £200 to spot it. The PA taper section is exceptional.',
-    author: 'James W.',
-    role: 'Contractor, London',
-    country: 'UK',
-    accentColor: '#DC2626',
+      'I\'ve been freelancing for 3 years and always guessed at my quarterly taxes. TaxCalc\'s SE calculator finally got me accurate.',
+    author: 'Jordan K.',
+    role: 'Consultant, Texas',
+    country: 'US',
+    accentColor: '#2563EB',
   },
 ];
 
@@ -312,17 +256,17 @@ const PROCESS_STEPS = [
   {
     step: '01',
     title: 'Enter your income',
-    description: 'Salary, freelance, capital gains, rental — all sources in one place.',
+    description: 'W-2, freelance, capital gains, rental — all sources in one place.',
   },
   {
     step: '02',
     title: 'Apply deductions',
-    description: 'Every eligible deduction pre-mapped. No section left behind.',
+    description: 'Every eligible deduction pre-mapped. No IRC section left behind.',
   },
   {
     step: '03',
-    title: 'Get CA-grade output',
-    description: 'Effective rate, marginal rate, advance tax, ITR form — full picture.',
+    title: 'Get CPA-grade output',
+    description: 'Effective rate, marginal rate, AMT exposure, SE tax — full picture.',
   },
 ];
 
@@ -377,7 +321,7 @@ export default function HomePage() {
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--warning)]" />
               </span>
               <span className="text-xs font-semibold text-[var(--warning)] tracking-wide uppercase">
-                AY 2025-26 filing deadline: July 31, 2025
+                Tax Year 2025 — IRS filing deadline April 15, 2026
               </span>
             </div>
           </div>
@@ -395,8 +339,7 @@ export default function HomePage() {
 
           {/* Subheading */}
           <p className="mx-auto mt-7 max-w-2xl text-center text-base text-[var(--text-secondary)] sm:text-lg leading-relaxed">
-            India &middot; United States &middot; United Kingdom —
-            ITR-grade calculations, CA-grade accuracy.{' '}
+            Federal + State &middot; Form 1040 &middot; AMT &middot; QBI &middot; EITC — every deduction, every credit.{' '}
             <strong className="text-[var(--text-primary)] font-semibold">Free.</strong>
           </p>
 
@@ -404,8 +347,8 @@ export default function HomePage() {
           <div className="mx-auto mt-6 max-w-xl text-center">
             <p className="inline-flex items-center gap-2 text-sm text-[var(--text-secondary)]">
               <AlertTriangle className="h-4 w-4 shrink-0 text-[var(--warning)]" />
-              Most people overpay{' '}
-              <span className="font-semibold text-[var(--text-primary)]">₹47,000+ in taxes annually</span>.
+              Most filers overpay{' '}
+              <span className="font-semibold text-[var(--text-primary)]">$1,200+ in federal taxes annually</span>.
               Don&apos;t be one of them.
             </p>
           </div>
@@ -420,11 +363,11 @@ export default function HomePage() {
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
             <a
-              href="#countries"
+              href="#tools"
               className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-[var(--border-strong)] bg-transparent px-6 py-3 text-sm font-semibold text-[var(--text-primary)] transition-all hover:bg-[var(--surface-raised)] hover:border-[var(--text-muted)]"
             >
               <ArrowUpDown className="h-4 w-4 text-[var(--text-muted)]" />
-              Choose Country
+              See All Tools
             </a>
           </div>
 
@@ -487,7 +430,7 @@ export default function HomePage() {
             <Users className="h-4 w-4 text-[var(--primary)]" />
             <span>
               Join{' '}
-              <strong className="text-[var(--text-primary)]">1.2L+ taxpayers</strong>{' '}
+              <strong className="text-[var(--text-primary)]">120,000+ taxpayers</strong>{' '}
               who identified savings this year &mdash; with zero cost.
             </span>
           </div>
@@ -500,11 +443,11 @@ export default function HomePage() {
       <section id="countries" className="mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
           <h2 className="text-3xl font-bold tracking-tight text-[var(--text-primary)] sm:text-4xl">
-            Three jurisdictions. Every deduction.
+            US Tax Calculator — live now.
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-sm text-[var(--text-secondary)]">
-            Precision-mapped to official legislation — not approximations.
-            Each calculator cites the actual section, form, or HMRC guidance it implements.
+            Precision-mapped to IRS publications and state DOR guidelines — not approximations.
+            India and UK launching in ~6 months.
           </p>
         </div>
 
@@ -590,7 +533,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="mb-12 text-center">
             <h2 className="text-3xl font-bold tracking-tight text-[var(--text-primary)] sm:text-4xl">
-              TaxCalc vs. hiring a CA
+              TaxCalc vs. hiring a CPA
             </h2>
             <p className="mx-auto mt-3 max-w-lg text-sm text-[var(--text-secondary)]">
               We don&apos;t replace your advisor. We walk you into that meeting already knowing your numbers —
@@ -724,13 +667,13 @@ export default function HomePage() {
       {/* ══════════════════════════════════════════════════════════════════════
           ALL TOOLS — Every calculator in one grid
       ══════════════════════════════════════════════════════════════════════ */}
-      <section className="mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+      <section id="tools" className="mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <div className="mb-12">
           <h2 className="text-3xl font-bold tracking-tight text-[var(--text-primary)] sm:text-4xl">
-            Every tool you need
+            Every US tax tool you need
           </h2>
           <p className="mt-3 text-sm text-[var(--text-secondary)]">
-            From first calculation to filing day — one platform, 20+ tools.
+            From first calculation to filing day — one platform, built for US filers.
           </p>
         </div>
 
@@ -840,7 +783,7 @@ export default function HomePage() {
             <div className="inline-flex items-center gap-2 rounded-full border border-[var(--danger)]/25 bg-[var(--danger)]/6 px-4 py-1.5">
               <Clock className="h-3.5 w-3.5 text-[var(--danger)]" />
               <span className="text-xs font-semibold text-[var(--danger)] tracking-wide">
-                Don&apos;t wait until July — start now and file stress-free
+                Don&apos;t wait until April 15 — start now and file stress-free
               </span>
             </div>
           </div>
@@ -890,10 +833,10 @@ export default function HomePage() {
             </Link>
           </div>
 
-          {/* CBDT authority signal */}
+          {/* Authority signal */}
           <p className="mt-8 text-xs text-[var(--text-muted)]">
-            Rates sourced from CBDT notifications, IRS Publication 15-T, and HMRC technical guidance.
-            Updated for AY 2026-27 / TY 2025 / UK 2025-26.
+            Rates sourced from IRS publications and state DOR guidelines.
+            Updated for Tax Year 2025 / Form 1040.
           </p>
         </div>
       </section>

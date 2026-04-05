@@ -135,27 +135,27 @@ interface ComparisonRow {
 }
 
 const COMPARISON_ROWS: ComparisonRow[] = [
-  { feature: 'Tax calculators (India, US, UK)', free: true, pro: true, ca: true },
-  { feature: 'Old vs New regime comparison', free: true, pro: true, ca: true },
+  { feature: 'US federal tax calculator (all filing statuses)', free: true, pro: true, ca: true },
+  { feature: '15 state income tax engines', free: true, pro: true, ca: true },
+  { feature: 'AMT checker (Form 6251)', free: true, pro: true, ca: true },
+  { feature: 'SE tax + quarterly estimates', free: true, pro: true, ca: true },
   { feature: 'PDF tax summary download', free: true, pro: true, ca: true },
-  { feature: '3-country compare page', free: true, pro: true, ca: true },
   { feature: 'Tax planning tools', free: true, pro: true, ca: true },
   { feature: 'Loss carry-forward tracker', free: true, pro: true, ca: true },
   { feature: 'Document checklist', free: true, pro: true, ca: true },
-  { feature: 'GST & TDS calculators', free: true, pro: true, ca: true },
   { feature: 'Crypto tax calculator', free: true, pro: true, ca: true },
   { feature: 'Freelancer SE calculator', free: true, pro: true, ca: true },
   { feature: '50+ glossary terms', free: true, pro: true, ca: true },
   { feature: 'AI Tax Assistant (unlimited)', free: false, pro: true, ca: true },
-  { feature: 'IT Notice Response Generator', free: false, pro: true, ca: true },
-  { feature: 'Form 16 & AIS PDF upload', free: false, pro: true, ca: true },
+  { feature: 'IRS Notice Response Generator', free: false, pro: true, ca: true },
+  { feature: 'W-2 / 1099 PDF upload + auto-fill', free: false, pro: true, ca: true },
   { feature: 'Multi-year carry-forward history', free: false, pro: true, ca: true },
   { feature: 'Priority email support', free: false, pro: true, ca: true },
   { feature: 'Early access to new features', free: false, pro: true, ca: true },
-  { feature: '60-min CA video consultation', free: false, pro: false, ca: true },
-  { feature: 'ITR review before filing', free: false, pro: false, ca: true },
-  { feature: 'Notice response with CA signature', free: false, pro: false, ca: true },
-  { feature: 'Transfer pricing & FEMA guidance', free: false, pro: false, ca: true },
+  { feature: '60-min CPA video consultation', free: false, pro: false, ca: true },
+  { feature: '1040 review before filing', free: false, pro: false, ca: true },
+  { feature: 'Notice response with CPA signature', free: false, pro: false, ca: true },
+  { feature: 'Complex business restructuring & multi-state issues', free: false, pro: false, ca: true },
 ];
 
 const FAQ_ITEMS = [
@@ -167,12 +167,12 @@ const FAQ_ITEMS = [
   {
     question: 'What exactly does the AI Tax Assistant do?',
     answer:
-      'The AI Tax Assistant answers unlimited tax questions in plain language — from regime selection to deduction eligibility, Section 80C planning, capital gains treatment, and more. It draws on the current Finance Act and is updated for each assessment year.',
+      'The AI Tax Assistant answers unlimited US tax questions in plain language — from AMT exposure to QBI deduction eligibility, EITC phase-outs, capital gains treatment, and more. It cites actual IRC sections and is updated for Tax Year 2025.',
   },
   {
-    question: 'How does the Notice Response Generator work?',
+    question: 'How does the IRS Notice Response Generator work?',
     answer:
-      'Upload your Income Tax Department notice. The tool identifies the notice type (143(1), 139(9), 148, etc.), drafts a point-by-point response in the correct format, and explains the compliance steps. A feature that advisors typically charge $75–200 per response for.',
+      'Upload your IRS notice. The tool identifies the notice type (CP2000, CP504, Letter 525, etc.), drafts a point-by-point response in the correct format, and explains the compliance steps. A feature that advisors typically charge $150–300 per response for.',
   },
   {
     question: 'Is there a free trial? What if I am not satisfied?',
@@ -182,7 +182,7 @@ const FAQ_ITEMS = [
   {
     question: 'What is CA Connect and why is it separate from Pro?',
     answer:
-      'CA Connect is for genuinely complex situations: business restructuring, transfer pricing, FEMA/RBI compliance, or when you need a CA signature on a notice response. It is priced per consultation ($35) because it involves a verified, licensed Chartered Accountant reviewing your actual documents. Pro handles everything a typical salaried or freelance taxpayer needs without a CA.',
+      'CA Connect pairs you with a verified CPA or Tax Attorney for genuinely complex situations: complex business restructuring, multi-state tax issues, or IRS audit representation. It is priced per consultation ($35) because it involves a licensed professional reviewing your actual documents. Pro handles everything a typical W-2 or freelance taxpayer needs without a CPA.',
   },
 ];
 
@@ -261,7 +261,7 @@ export default function PricingPage() {
                 </span>
               </div>
               <p className="text-sm text-[var(--text-secondary)] mb-4">
-                A verified Chartered Accountant reviews your case directly.
+                A verified CPA or Tax Attorney reviews your case directly.
               </p>
               <div>
                 <div className="flex items-baseline gap-1">
@@ -279,11 +279,11 @@ export default function PricingPage() {
                 Everything in Pro, plus:
               </li>
               {[
-                '60-minute video call with verified CA',
-                'Review of your actual ITR before filing',
-                'Notice response with CA signature',
-                'Transfer pricing & business restructuring',
-                'FEMA / RBI compliance guidance',
+                '60-minute video call with verified CPA / Tax Attorney',
+                'Review of your actual 1040 before filing',
+                'IRS notice response with CPA signature',
+                'Complex business restructuring advice',
+                'Multi-state tax issues & IRS audit representation',
               ].map((feat) => (
                 <li key={feat} className="flex items-start gap-2.5">
                   <Check className="h-4 w-4 text-[var(--success)] mt-0.5 shrink-0" />
@@ -361,8 +361,8 @@ export default function PricingPage() {
               </li>
               {[
                 'AI Tax Assistant — unlimited queries',
-                'IT Notice Response Generator',
-                'Form 16 & AIS PDF upload + auto-fill',
+                'IRS Notice Response Generator',
+                'W-2 / 1099 PDF upload + auto-fill',
                 'Multi-year carry-forward history',
                 'Priority email support',
                 'Early access to new features',
@@ -403,14 +403,14 @@ export default function PricingPage() {
 
             <ul className="space-y-2.5 mb-8 flex-1">
               {[
-                'India, US & UK tax calculators',
-                'Old vs New regime comparison',
+                'US federal tax calculator (all filing statuses)',
+                '15 state income tax engines',
+                'AMT checker (Form 6251)',
+                'SE tax + quarterly estimates',
                 'PDF tax summary download',
-                '3-country compare page',
                 'Tax planning tools',
                 'Loss carry-forward tracker',
                 'Document checklist',
-                'GST & TDS calculators',
                 'Crypto tax calculator',
                 'Freelancer SE calculator',
                 '50+ glossary terms',
@@ -423,7 +423,7 @@ export default function PricingPage() {
             </ul>
 
             <a
-              href="/in"
+              href="/us"
               className="block w-full text-center px-4 py-2.5 text-sm font-medium border border-[var(--border)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--surface-raised)] transition-colors"
             >
               Start Free — No Signup
@@ -459,7 +459,7 @@ export default function PricingPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="text-center p-4 rounded-lg bg-[var(--surface-raised)]">
               <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide mb-1">
-                1 CA Consultation
+                1 CPA Consultation
               </p>
               <p className="text-2xl font-bold text-[var(--danger)] num">$150–$500</p>
               <p className="text-xs text-[var(--text-muted)] mt-1">Per session · varies by advisor</p>
@@ -556,7 +556,7 @@ export default function PricingPage() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <a
-              href="/in"
+              href="/us"
               className="px-6 py-2.5 text-sm font-medium border border-[var(--border)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--surface-raised)] bg-[var(--surface)] transition-colors"
             >
               Open Free Calculator
@@ -576,8 +576,7 @@ export default function PricingPage() {
 
         {/* ── Footer disclaimer ─────────────────────────────────────────────── */}
         <p className="text-center text-xs text-[var(--text-muted)] mt-8">
-          All prices include applicable taxes. Pro and CA Connect are in development — no charges
-          will be collected until launch.
+          All prices in USD. No sales tax on software subscriptions in most US states. Pro and CA Connect are in development — no charges will be collected until launch.
         </p>
       </div>
     </div>

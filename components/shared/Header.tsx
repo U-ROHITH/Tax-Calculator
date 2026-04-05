@@ -382,6 +382,14 @@ export default function Header() {
           font-weight: 500;
           letter-spacing: -0.01em;
         }
+        .logo-tagline {
+          font-size: 0.6875rem;
+          font-weight: 500;
+          color: var(--text-muted);
+          letter-spacing: 0.01em;
+          line-height: 1;
+          margin-top: 1px;
+        }
 
         /* ── Active underline indicator ── */
         .nav-active-dot::after {
@@ -511,8 +519,11 @@ export default function Header() {
               aria-label="TaxCalc Global home"
             >
               <BarChart3 className="h-5 w-5 text-[var(--primary)] shrink-0" strokeWidth={2.25} />
-              <span className="logo-wordmark">
-                TaxCalc<span className="logo-global"> Global</span>
+              <span className="flex flex-col">
+                <span className="logo-wordmark">
+                  TaxCalc<span className="logo-global"> Global</span>
+                </span>
+                <span className="logo-tagline">US · 2025</span>
               </span>
             </Link>
 
