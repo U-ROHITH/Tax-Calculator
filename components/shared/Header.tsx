@@ -482,7 +482,8 @@ export default function Header() {
           align-items: center;
           justify-content: center;
           gap: 6px;
-          padding: 11px;
+          padding: 13px 16px;
+          min-height: 44px;
           border-radius: 10px;
           font-size: 0.9375rem;
           font-weight: 700;
@@ -490,6 +491,8 @@ export default function Header() {
           color: var(--primary-foreground);
           text-decoration: none;
           letter-spacing: -0.01em;
+          width: 100%;
+          box-sizing: border-box;
         }
       `}</style>
 

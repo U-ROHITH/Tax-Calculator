@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
+import { ChevronRight } from 'lucide-react';
 import USCalculator from '@/components/calculator/USCalculator';
 
 export const metadata: Metadata = {
@@ -58,6 +60,25 @@ export default function USPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      {/* Breadcrumb */}
+      <nav
+        aria-label="Breadcrumb"
+        className="border-b border-[var(--border)] bg-[var(--surface-raised)]"
+      >
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <ol className="flex items-center gap-1 py-2.5 text-xs text-[var(--text-muted)]">
+            <li>
+              <Link href="/" className="hover:text-[var(--text-primary)] transition-colors">
+                Home
+              </Link>
+            </li>
+            <li aria-hidden="true">
+              <ChevronRight className="h-3 w-3" />
+            </li>
+            <li className="font-medium text-[var(--text-primary)]">US Tax Calculator</li>
+          </ol>
+        </div>
+      </nav>
       <USCalculator />
     </>
   );

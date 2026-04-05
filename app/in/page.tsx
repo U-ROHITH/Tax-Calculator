@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Clock, ArrowRight, Calculator } from 'lucide-react';
+import { Clock, ArrowRight, Calculator, ChevronRight } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'India Tax Calculator — Coming Soon | TaxCalc Global',
@@ -9,6 +9,27 @@ export const metadata: Metadata = {
 
 export default function IndiaPage() {
   return (
+    <>
+      {/* Breadcrumb */}
+      <nav
+        aria-label="Breadcrumb"
+        className="border-b border-[var(--border)] bg-[var(--surface-raised)]"
+      >
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <ol className="flex items-center gap-1 py-2.5 text-xs text-[var(--text-muted)]">
+            <li>
+              <Link href="/" className="hover:text-[var(--text-primary)] transition-colors">
+                Home
+              </Link>
+            </li>
+            <li aria-hidden="true">
+              <ChevronRight className="h-3 w-3" />
+            </li>
+            <li className="font-medium text-[var(--text-primary)]">India Tax Calculator</li>
+          </ol>
+        </div>
+      </nav>
+
     <div className="min-h-[80vh] flex items-center justify-center px-4">
       <div className="max-w-lg w-full text-center space-y-6">
         <div className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-4 py-1.5 text-sm font-medium text-[var(--text-secondary)]">
@@ -62,5 +83,6 @@ export default function IndiaPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
