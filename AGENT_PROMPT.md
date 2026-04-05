@@ -596,6 +596,72 @@ Build + push.
 
 ---
 
+## v5 — Freelancer, Crypto, Student, Blog, Pricing
+
+---
+
+### 🔲 M30 — US Freelancer / Self-Employment Calculator (`/freelancer`)
+Dedicated page for US freelancers. Different from the main US calculator (which assumes W-2).
+- SE income input + qualified business expenses (home office %, internet, equipment, vehicle)
+- SE tax: 15.3% on 92.35% of net SE income (SS + Medicare)
+- SE tax deduction: 50% of SE tax above-the-line
+- QBI deduction: 20% of net SE income (with income limits)
+- Federal tax on (AGI - standard deduction - QBI)
+- **Quarterly estimate**: show Q1/Q2/Q3/Q4 due amounts with dates (April 15, June 15, Sept 15, Jan 15)
+- Deductions optimizer: for each expense entered, show "you save $X by claiming this"
+- Scenario tool: "What if I earn $10k more?" / "What if I add $5k expenses?" — 2 scenarios side by side
+- Retirement savings suggestion: max 401k ($23,500) / IRA ($7,000) / SEP-IRA (25% of net SE) — show exact tax saving
+Build + push.
+
+### 🔲 M31 — Crypto Tax Module (`/crypto`)
+Standalone calculator. No modification to existing engines.
+- Input: Buy price, sell price, quantity, holding period, country (India/US/UK)
+- Auto STCG/LTCG classification based on holding (India: any period = slab; US: <1yr STCG / ≥1yr LTCG; UK: CGT)
+- India: crypto taxed at 30% flat (Section 115BBH, no deductions except cost of acquisition, no loss set-off)
+- US: STCG at ordinary income rate, LTCG at 0%/15%/20% preferential rates
+- UK: CGT at 18%/24% (basic/higher rate taxpayer)
+- Multiple transactions: add up to 10 buy/sell pairs, aggregate gain/loss
+- Wash sale warning (US): if sold at loss and repurchased within 30 days, loss disallowed
+- India-specific: 1% TDS u/s 194S on crypto sale > ₹50K (₹10K for non-exchange)
+Build + push.
+
+### 🔲 M32 — Student / F1 Visa Mode (`/student`)
+Simple mode for international students in the US on F1/J1 visas.
+- "Do I need to file?" decision tree: presence test, income threshold ($5 if treaty country, $13,850 general)
+- F1 visa holders: FICA exempt for first 5 years; claim treaty benefits
+- Residency status: substantial presence test calculator (days in US × fraction)
+- NR vs Resident: if NR → file 1040-NR (different deduction rules)
+- Simple income calculator: stipend/scholarship (partly taxable), TA/RA income, internship income
+- Show: estimated federal tax, whether to file 1040 vs 1040-NR, FICA exemption savings
+Build + push.
+
+### 🔲 M33 — Blog Page (`/blog`) + Pricing Page (`/pricing`)
+**Blog (SEO traffic):**
+- Route: `/blog` — index page listing articles
+- Route: `/blog/[slug]` — individual article page
+- No CMS needed — articles as TypeScript/MDX files in `content/blog/`
+- 6 pre-written articles (static content):
+  1. "Old vs New Tax Regime India FY 2025-26 — Which is Better?"
+  2. "How to Calculate HRA Exemption — 3 Methods Explained"
+  3. "LTCG Tax on Equity After Budget 2024 — What Changed"
+  4. "US Freelancer Tax Guide — SE Tax, Quarterly Payments, Deductions"
+  5. "UK 60% Tax Trap — How the Personal Allowance Taper Works"
+  6. "ITR Forms Guide — Which ITR to File for Your Income Type"
+- Each article: H1 title, date, 600-800 words of real informative content (not filler), proper sections, no emojis
+
+**Pricing Page:**
+- Route: `/pricing` — 3 tiers:
+  1. **Free** — All calculators, all countries, PDF download, comparison, planning tools
+  2. **Pro** ₹499/month — AI Tax Assistant (unlimited), Notice Response Generator, Form 16 upload, Priority support
+  3. **CA Connect** ₹2,999/consultation — Connect with a verified CA for complex cases (note: "Coming soon")
+- Design: 3 cards, center card (Pro) highlighted with `border-[var(--primary)]`
+- Billing toggle: Monthly / Annual (Annual = 20% off)
+- Feature comparison table below cards
+- Note: Payment integration not needed — "Get Started" buttons link to calculator pages for Free; show "Coming Soon" modal for Pro/CA Connect
+Build + push.
+
+---
+
 ## Commit Convention
 
 ```
