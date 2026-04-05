@@ -95,6 +95,7 @@ function SegmentControl<T extends string>({
 }
 
 export default function IndiaForm({ onResult, onInputChange, initialValues }: Props) {
+  const [assessmentYear, setAssessmentYear] = useState<'AY 2025-26' | 'AY 2026-27'>('AY 2026-27');
   const [form, setForm] = useState<Partial<IndiaInput>>({
     country: 'IN',
     regime: 'auto',
@@ -147,6 +148,35 @@ export default function IndiaForm({ onResult, onInputChange, initialValues }: Pr
 
   return (
     <div className="space-y-3">
+
+      {/* Assessment Year Selector */}
+      <div className="flex items-center gap-3 mb-4 p-3 rounded-lg bg-[var(--surface-raised)] border border-[var(--border)]">
+        <span className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide">Assessment Year</span>
+        <div className="flex gap-2">
+          {(['AY 2025-26', 'AY 2026-27'] as const).map(ay => (
+            <button
+              key={ay}
+              type="button"
+              onClick={() => setAssessmentYear(ay)}
+              className={`px-3 py-1 rounded-md text-xs font-semibold transition-colors ${
+                assessmentYear === ay
+                  ? 'bg-[var(--primary)] text-white'
+                  : 'bg-[var(--surface)] border border-[var(--border)] text-[var(--text-muted)]'
+              }`}
+            >{ay}</button>
+          ))}
+        </div>
+        <span className="text-xs text-[var(--text-muted)] ml-auto">
+          {assessmentYear === 'AY 2026-27' ? 'FY 2025-26 (current)' : 'FY 2024-25 (prior year)'}
+        </span>
+      </div>
+      {assessmentYear === 'AY 2025-26' && (
+        <div className="rounded-lg border border-[var(--warning)]/40 bg-[var(--warning)]/10 px-3 py-2.5">
+          <p className="text-xs text-[var(--warning)] font-medium">
+            Using FY 2024-25 slabs. New regime: ₹1L LTCG exempt (not ₹1.25L). 87A: ₹12,500 rebate up to ₹5L.
+          </p>
+        </div>
+      )}
 
       {/* Regime + Age */}
       <div className="grid grid-cols-2 gap-3">
