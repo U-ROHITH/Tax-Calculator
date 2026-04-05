@@ -238,9 +238,28 @@ function computeCapitalGains(input: IndiaInput): CGResult {
       entry.gainType === 'long' &&
       entry.yearOfAcquisition !== undefined
     ) {
+      // Section 50C: if saleValue < stampDutyValue, use stampDutyValue as effective consideration
+      let effectiveSaleValue = entry.saleValue;
+      if (entry.stampDutyValue !== undefined && entry.saleValue < entry.stampDutyValue) {
+        effectiveSaleValue = entry.stampDutyValue;
+        // note: Section 50C deemed consideration applied
+      }
       const purchaseCII = getCII(entry.yearOfAcquisition);
       const indexedCost = entry.costOfAcquisition * (currentCII / purchaseCII);
-      gainAmount = positiveOrZero(entry.saleValue - indexedCost);
+      gainAmount = positiveOrZero(effectiveSaleValue - indexedCost);
+    } else if (
+      entry.saleValue !== undefined &&
+      entry.assetType === 'property' &&
+      entry.stampDutyValue !== undefined &&
+      entry.saleValue < entry.stampDutyValue
+    ) {
+      // Section 50C for short-term or no-indexation cases
+      const effectiveSaleValue = entry.stampDutyValue;
+      if (entry.costOfAcquisition !== undefined) {
+        gainAmount = positiveOrZero(effectiveSaleValue - entry.costOfAcquisition);
+      } else {
+        gainAmount = positiveOrZero(effectiveSaleValue - (entry.amount ?? 0));
+      }
     }
 
     gainAmount = positiveOrZero(gainAmount);
@@ -292,12 +311,27 @@ function computeCapitalGains(input: IndiaInput): CGResult {
 // ─── Other Sources Income ────────────────────────────────────────────────────
 
 function computeOtherSourcesIncome(input: IndiaInput): number {
-  return (
+  let income =
     positiveOrZero(nvl(input.savingsInterest)) +
     positiveOrZero(nvl(input.fdInterest)) +
     positiveOrZero(nvl(input.dividendIncome)) +
-    positiveOrZero(nvl(input.otherIncome))
-  );
+    positiveOrZero(nvl(input.otherIncome));
+
+  // Section 56(2)(x) — gift from non-relative taxable if > ₹50,000
+  let giftTaxable = 0;
+  if (input.giftReceived && !input.giftFromRelative) {
+    giftTaxable = input.giftReceived > 50000 ? input.giftReceived : 0;
+  }
+  income += giftTaxable;
+
+  // Clubbing of minor child income — ₹1,500 per child exempt
+  // (using fixed ₹1,500 exemption per the rule; we treat minorChildIncome as total across all children,
+  //  and deduct ₹1,500 for 1 child as a conservative default)
+  const clubbingExemptPerChild = 1500;
+  const clubbedIncome = Math.max(0, (input.minorChildIncome ?? 0) - clubbingExemptPerChild);
+  income += clubbedIncome;
+
+  return income;
 }
 
 // ─── Chapter VI-A Deductions ─────────────────────────────────────────────────
@@ -633,6 +667,11 @@ function calcForRegime(input: IndiaInput, regime: 'old' | 'new'): TaxResult {
   const salaryResult = computeSalaryIncome(input, regime, stdDeduction);
   let salaryIncome = salaryResult.netSalaryIncome;
 
+  // ESOP Perquisite: (FMV on exercise - exercise price) × shares — taxed as salary
+  if (nvl(input.esopPerquisite) > 0) {
+    salaryIncome += nvl(input.esopPerquisite);
+  }
+
   // ── 2. Employer NPS deduction (80CCD(2)) — both regimes ──────────────────
   // 14% of basic salary for government employees; 10% for others (FY 25-26: 14%)
   const maxEmployerNPS = nvl(input.basicSalary) * 0.14;
@@ -647,6 +686,18 @@ function calcForRegime(input: IndiaInput, regime: 'old' | 'new'): TaxResult {
 
   // ── 5. Capital Gains ──────────────────────────────────────────────────────
   const cgResult = computeCapitalGains(input);
+
+  // ESOP subsequent gains: short → slab income; long → equity LTCG pool
+  if (input.esopSubsequentGain && input.esopSubsequentGain.length > 0) {
+    for (const esopGain of input.esopSubsequentGain) {
+      const amt = positiveOrZero(esopGain.amount);
+      if (esopGain.gainType === 'short') {
+        cgResult.slabIncome += amt;
+      } else {
+        cgResult.equityLTCGAmount += amt;
+      }
+    }
+  }
 
   // ── 6. Other Sources ──────────────────────────────────────────────────────
   const otherSourcesIncome = computeOtherSourcesIncome(input);
@@ -667,6 +718,13 @@ function calcForRegime(input: IndiaInput, regime: 'old' | 'new'): TaxResult {
   if (regime === 'old') {
     const dedResult = computeDeductions(input, normalGTI);
     totalDeductions = dedResult.total;
+
+    // Section 80-IAC: startup tax holiday — 100% of eligible profit for 3 of first 10 years
+    // Only applicable for regular businesses
+    if (input.businessType === 'regular' && nvl(input.section80IAC) > 0) {
+      const deduction80IAC = Math.min(nvl(input.section80IAC), businessIncome);
+      totalDeductions = Math.min(totalDeductions + deduction80IAC, normalGTI);
+    }
   }
 
   // ── 9. Taxable Income (for slab computation) ──────────────────────────────

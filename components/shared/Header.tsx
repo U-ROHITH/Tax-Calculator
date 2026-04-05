@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BarChart3, Sun, Moon } from 'lucide-react';
+import { BarChart3, Sun, Moon, Bot } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 const NAV_LINKS = [
@@ -12,6 +12,7 @@ const NAV_LINKS = [
   { href: '/compare', label: 'Compare' },
   { href: '/plan', label: 'Tax Planning' },
   { href: '/checklist', label: 'Checklist' },
+  { href: '/assistant', label: 'Assistant', mobileLabel: 'AI', icon: true },
 ];
 
 export default function Header() {
@@ -51,20 +52,21 @@ export default function Header() {
 
         {/* Nav */}
         <nav className="hidden md:flex items-center gap-1">
-          {NAV_LINKS.map(({ href, label }) => {
+          {NAV_LINKS.map(({ href, label, icon }) => {
             const isActive = pathname === href || pathname.startsWith(href + '/');
             return (
               <Link
                 key={href}
                 href={href}
                 className={[
-                  'relative px-3 py-1.5 text-sm font-medium transition-colors duration-100',
+                  'relative flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium transition-colors duration-100',
                   'hover:text-[var(--text-primary)]',
                   isActive
                     ? 'text-[var(--text-primary)] after:absolute after:bottom-0 after:left-3 after:right-3 after:h-px after:bg-[var(--primary)] after:content-[""]'
                     : 'text-[var(--text-secondary)]',
                 ].join(' ')}
               >
+                {icon && <Bot className="h-3.5 w-3.5" />}
                 {label}
               </Link>
             );
@@ -75,20 +77,21 @@ export default function Header() {
         <div className="flex items-center gap-2">
           {/* Mobile nav links */}
           <nav className="flex md:hidden items-center gap-0.5">
-            {NAV_LINKS.map(({ href, label }) => {
+            {NAV_LINKS.map(({ href, label, mobileLabel, icon }) => {
               const isActive = pathname === href || pathname.startsWith(href + '/');
-              const short = label === 'United States' ? 'US' : label === 'United Kingdom' ? 'UK' : label === 'Tax Planning' ? 'Plan' : label;
+              const short = mobileLabel ?? (label === 'United States' ? 'US' : label === 'United Kingdom' ? 'UK' : label === 'Tax Planning' ? 'Plan' : label);
               return (
                 <Link
                   key={href}
                   href={href}
                   className={[
-                    'px-2 py-1 text-xs font-medium transition-colors duration-100',
+                    'flex items-center gap-1 px-2 py-1 text-xs font-medium transition-colors duration-100',
                     isActive
                       ? 'text-[var(--text-primary)]'
                       : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]',
                   ].join(' ')}
                 >
+                  {icon && <Bot className="h-3 w-3" />}
                   {short}
                 </Link>
               );

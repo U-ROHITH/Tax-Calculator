@@ -27,6 +27,7 @@ export interface CapitalGainEntry {
   costOfAcquisition?: number;
   yearOfAcquisition?: number; // for CII indexation on property (e.g. 2015 means FY 2015-16)
   sttPaid?: boolean;       // for equity CG rates
+  stampDutyValue?: number; // Section 50C: if saleValue < stampDutyValue, use stampDutyValue
 }
 
 export interface AdvanceTaxInstalment {
@@ -116,6 +117,23 @@ export interface IndiaInput {
   // --- ARREAR SALARY ---
   arrearSalary?: number;        // for 89(1) relief calculation
   arrearYear?: number;          // which previous year the arrear pertains to
+
+  // --- SECTION 56(2)(x) — gifts from non-relatives ---
+  giftReceived?: number;        // total gift value received
+  giftFromRelative?: boolean;   // if true, fully exempt
+
+  // --- ESOP ---
+  esopPerquisite?: number;      // (FMV on exercise - exercise price) × shares — taxed as salary
+  esopSubsequentGain?: {
+    gainType: 'short' | 'long';
+    amount: number;             // sale price - FMV on exercise date
+  }[];
+
+  // --- CLUBBING OF MINOR CHILD INCOME ---
+  minorChildIncome?: number;    // total income of all minor children; ₹1,500/child exempt
+
+  // --- SECTION 80-IAC (startup tax holiday) ---
+  section80IAC?: number;        // eligible profit deduction (100% for 3 of first 10 years)
 }
 
 export interface USCapitalGain {

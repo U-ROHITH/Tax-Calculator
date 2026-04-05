@@ -1,13 +1,12 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { NextRequest, NextResponse } from 'next/server';
 
-// ---------- Environment guard ----------
-const apiKey = process.env.ANTHROPIC_API_KEY;
-if (!apiKey) {
-  throw new Error('ANTHROPIC_API_KEY environment variable is not set');
+// ---------- Environment guard (lazy — checked at request time, not build time) ----------
+function getClient(): Anthropic {
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) throw new Error('ANTHROPIC_API_KEY environment variable is not set');
+  return new Anthropic({ apiKey });
 }
-
-const client = new Anthropic({ apiKey });
 
 // ---------- Constants ----------
 const MAX_TOKENS = 2048;
@@ -162,7 +161,7 @@ export async function POST(req: NextRequest) {
 
   // Call Anthropic and stream response
   try {
-    const stream = await client.messages.stream({
+    const stream = await getClient().messages.stream({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: MAX_TOKENS,
       system: SYSTEM_PROMPT,
