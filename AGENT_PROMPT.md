@@ -600,7 +600,7 @@ Build + push.
 
 ---
 
-### 🔲 M30 — US Freelancer / Self-Employment Calculator (`/freelancer`)
+### ✅ M30 — DONE — US Freelancer / Self-Employment Calculator (`/freelancer`) **Pushed ✓**
 Dedicated page for US freelancers. Different from the main US calculator (which assumes W-2).
 - SE income input + qualified business expenses (home office %, internet, equipment, vehicle)
 - SE tax: 15.3% on 92.35% of net SE income (SS + Medicare)
