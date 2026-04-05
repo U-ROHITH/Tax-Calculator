@@ -571,7 +571,7 @@ export default function Header() {
               </button>
 
               {/* CTA — desktop */}
-              <Link href="/in" className="cta-btn hidden sm:inline-flex">
+              <Link href="/us" className="cta-btn hidden sm:inline-flex">
                 Start Free
                 <ArrowRight className="h-3.5 w-3.5" />
               </Link>
@@ -670,7 +670,7 @@ export default function Header() {
               </div>
 
               {/* Mobile CTA */}
-              <Link href="/in" className="mobile-cta">
+              <Link href="/us" className="mobile-cta">
                 Start Free
                 <ArrowRight className="h-4 w-4" />
               </Link>

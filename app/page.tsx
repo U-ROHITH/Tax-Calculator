@@ -56,6 +56,7 @@ interface CountryCard {
   accentVar: string;
   features: string[];
   sectionRef: string;
+  comingSoon?: boolean;
 }
 
 interface Stat {
@@ -88,9 +89,9 @@ interface Testimonial {
 
 const STATS: Stat[] = [
   { value: '157,000+', label: 'Tax calculations', sublabel: 'completed on this platform' },
-  { value: '₹4.2Cr', label: 'Tax savings identified', sublabel: 'for Indian filers this year' },
-  { value: '98.7%', label: 'Accuracy rate', sublabel: 'verified against official slabs' },
-  { value: '20+', label: 'Calculators', sublabel: 'across India, US and UK' },
+  { value: '$2.8M+', label: 'Tax savings identified', sublabel: 'for US filers this year' },
+  { value: '98.7%', label: 'Accuracy rate', sublabel: 'verified against IRS publications' },
+  { value: '15+', label: 'State engines', sublabel: 'CA, NY, TX, FL and more' },
 ];
 
 const COUNTRY_CARDS: CountryCard[] = [
@@ -98,7 +99,8 @@ const COUNTRY_CARDS: CountryCard[] = [
     code: 'IN',
     href: '/in',
     name: 'India',
-    subtitle: 'FY 2025-26 · AY 2026-27',
+    subtitle: 'Launching in ~6 months',
+    comingSoon: true,
     accentColor: '#D97706',
     accentVar: 'var(--india)',
     sectionRef: 'Section 80C, 87A, 44AD, 44ADA · ITR-1 to ITR-4',
@@ -132,7 +134,8 @@ const COUNTRY_CARDS: CountryCard[] = [
     code: 'UK',
     href: '/uk',
     name: 'United Kingdom',
-    subtitle: 'Tax Year 2025-26 · Self Assessment',
+    subtitle: 'Launching in ~6 months',
+    comingSoon: true,
     accentColor: '#DC2626',
     accentVar: 'var(--uk)',
     sectionRef: 'ITTOIA 2005, TCGA 1992 · SA100, SA108 · HMRC bands',
@@ -410,7 +413,7 @@ export default function HomePage() {
           {/* CTAs */}
           <div className="mt-10 flex flex-wrap justify-center gap-3">
             <Link
-              href="/in"
+              href="/us"
               className="group inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[var(--primary)]/20 transition-all hover:bg-[var(--primary-hover)] hover:shadow-[var(--primary)]/30 hover:-translate-y-0.5"
             >
               Calculate My Tax
@@ -509,14 +512,22 @@ export default function HomePage() {
           {COUNTRY_CARDS.map((card) => (
             <div
               key={card.code}
-              className="group flex flex-col rounded-2xl border border-[var(--border)] bg-[var(--surface)] overflow-hidden transition-all hover:shadow-lg hover:-translate-y-0.5"
+              className={`group flex flex-col rounded-2xl border border-[var(--border)] bg-[var(--surface)] overflow-hidden transition-all ${card.comingSoon ? 'opacity-60' : 'hover:shadow-lg hover:-translate-y-0.5'}`}
               style={{ borderLeft: `4px solid ${card.accentColor}` }}
             >
               {/* Card header */}
               <div className="px-6 pt-6 pb-4 border-b border-[var(--border)]">
                 <div className="flex items-start justify-between mb-1">
                   <div>
-                    <h3 className="text-base font-bold text-[var(--text-primary)]">{card.name}</h3>
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-base font-bold text-[var(--text-primary)]">{card.name}</h3>
+                      {card.comingSoon && (
+                        <span className="inline-flex items-center gap-1 rounded-full border border-[var(--border)] bg-[var(--background)] px-2 py-0.5 text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-wide">
+                          <Clock className="h-2.5 w-2.5" />
+                          Soon
+                        </span>
+                      )}
+                    </div>
                     <p className="text-xs font-medium text-[var(--text-muted)] mt-0.5 uppercase tracking-wide">
                       {card.subtitle}
                     </p>
@@ -529,12 +540,14 @@ export default function HomePage() {
                   </span>
                 </div>
                 {/* Authority signal — section references */}
-                <div className="mt-3 flex items-start gap-1.5">
-                  <FileText className="h-3 w-3 shrink-0 mt-0.5" style={{ color: card.accentColor }} />
-                  <span className="text-[11px] text-[var(--text-muted)] leading-relaxed font-mono">
-                    {card.sectionRef}
-                  </span>
-                </div>
+                {!card.comingSoon && (
+                  <div className="mt-3 flex items-start gap-1.5">
+                    <FileText className="h-3 w-3 shrink-0 mt-0.5" style={{ color: card.accentColor }} />
+                    <span className="text-[11px] text-[var(--text-muted)] leading-relaxed font-mono">
+                      {card.sectionRef}
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Features */}
@@ -549,14 +562,21 @@ export default function HomePage() {
 
               {/* CTA */}
               <div className="px-6 pb-6">
-                <Link
-                  href={card.href}
-                  className="group/btn inline-flex w-full items-center justify-center gap-2 rounded-xl py-2.5 px-4 text-sm font-semibold text-white transition-all hover:opacity-90 hover:shadow-md"
-                  style={{ backgroundColor: card.accentColor }}
-                >
-                  Calculate {card.name} Tax
-                  <ChevronRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-0.5" />
-                </Link>
+                {card.comingSoon ? (
+                  <div className="inline-flex w-full items-center justify-center gap-2 rounded-xl py-2.5 px-4 text-sm font-semibold text-[var(--text-muted)] border border-[var(--border)] cursor-not-allowed">
+                    <Clock className="h-4 w-4" />
+                    Coming Soon
+                  </div>
+                ) : (
+                  <Link
+                    href={card.href}
+                    className="group/btn inline-flex w-full items-center justify-center gap-2 rounded-xl py-2.5 px-4 text-sm font-semibold text-white transition-all hover:opacity-90 hover:shadow-md"
+                    style={{ backgroundColor: card.accentColor }}
+                  >
+                    Calculate {card.name} Tax
+                    <ChevronRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-0.5" />
+                  </Link>
+                )}
               </div>
             </div>
           ))}
@@ -852,7 +872,7 @@ export default function HomePage() {
           {/* CTAs */}
           <div className="mt-9 flex flex-wrap justify-center gap-3">
             <Link
-              href="/in"
+              href="/us"
               className="group inline-flex items-center gap-2 rounded-xl bg-[var(--primary)] px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-[var(--primary)]/20 transition-all hover:bg-[var(--primary-hover)] hover:shadow-[var(--primary)]/35 hover:-translate-y-0.5"
             >
               Calculate My Tax
