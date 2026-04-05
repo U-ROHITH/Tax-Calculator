@@ -613,7 +613,7 @@ Dedicated page for US freelancers. Different from the main US calculator (which 
 - Retirement savings suggestion: max 401k ($23,500) / IRA ($7,000) / SEP-IRA (25% of net SE) — show exact tax saving
 Build + push.
 
-### 🔲 M31 — Crypto Tax Module (`/crypto`)
+### ✅ M31 — Crypto Tax Module (`/crypto`) — DONE **Pushed ✓**
 Standalone calculator. No modification to existing engines.
 - Input: Buy price, sell price, quantity, holding period, country (India/US/UK)
 - Auto STCG/LTCG classification based on holding (India: any period = slab; US: <1yr STCG / ≥1yr LTCG; UK: CGT)
