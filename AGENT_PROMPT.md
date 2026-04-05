@@ -635,7 +635,7 @@ Simple mode for international students in the US on F1/J1 visas.
 - Show: estimated federal tax, whether to file 1040 vs 1040-NR, FICA exemption savings
 Build + push.
 
-### 🔲 M33 — Blog Page (`/blog`) + Pricing Page (`/pricing`)
+### ✅ M33 — DONE — Blog Page (`/blog`) + Pricing Page (`/pricing`) **Pushed ✓**
 **Blog (SEO traffic):**
 - Route: `/blog` — index page listing articles
 - Route: `/blog/[slug]` — individual article page
