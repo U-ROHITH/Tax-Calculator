@@ -1,7 +1,42 @@
-# TaxCalc Global — Agent Mission File v3
+# TaxCalc Global — Agent Mission File v4
 
 > Read this entire file before touching any code.
 > After every milestone: git add -A → commit → push → update this file → continue.
+
+---
+
+## ECC (everything-claude-code) Tooling — INSTALLED
+
+Repo: https://github.com/affaan-m/everything-claude-code (cloned at `/home/prime/ecc`)
+Installed via: `node scripts/install-apply.js --target claude typescript`
+Installs to: `~/.claude/rules/` and `~/.claude/agents/`
+
+### Agents now available (use these actively):
+- **`code-reviewer`** — Use after every significant code change. Reviews for OWASP, quality, security.
+- **`typescript-reviewer`** — TypeScript-specific: types, patterns, Next.js conventions.
+- **`security-reviewer`** — CRITICAL to use on all API routes (`app/api/**`). Checks for injection, secrets leak, SSRF.
+- **`tdd-guide`** — TDD specialist. Use when writing new engine functions — ensures 80%+ coverage.
+- **`planner`** — Uses Opus for complex feature planning. Use before starting any milestone > 2 files.
+- **`database-reviewer`** — If we add Supabase/Postgres later.
+
+### Rules now active (auto-loaded by Claude Code):
+- `~/.claude/rules/typescript/coding-style.md` — Explicit types on exports, interface naming, no `any`
+- `~/.claude/rules/typescript/security.md` — Sanitization, no eval, safe patterns
+- `~/.claude/rules/typescript/testing.md` — Test structure, coverage targets
+- `~/.claude/rules/common/security.md` — OWASP Top 10, secrets detection
+- `~/.claude/rules/common/git-workflow.md` — Commit conventions
+
+### How to use ECC agents in this project:
+```bash
+# Review the AI API routes for security issues
+# → Use security-reviewer agent on app/api/
+
+# After adding new engine functions
+# → Use tdd-guide agent to write tests first
+
+# Before starting a new milestone
+# → Use planner agent to get implementation plan
+```
 
 ---
 
