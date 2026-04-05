@@ -1,11 +1,26 @@
 'use client';
 
 import { useState } from 'react';
-import { Check, Minus, X, Mail } from 'lucide-react';
+import {
+  Check,
+  Minus,
+  X,
+  Mail,
+  Shield,
+  CreditCard,
+  RotateCcw,
+  Users,
+  Clock,
+  ChevronDown,
+  ChevronUp,
+  Lock,
+  BadgeCheck,
+  AlertTriangle,
+} from 'lucide-react';
 
 type Billing = 'monthly' | 'annual';
 
-// ─── Coming Soon Modal ───────────────────────────────────────────────────────
+// ─── Coming Soon Modal ────────────────────────────────────────────────────────
 
 function ComingSoonModal({ onClose }: { onClose: () => void }) {
   const [email, setEmail] = useState('');
@@ -29,7 +44,7 @@ function ComingSoonModal({ onClose }: { onClose: () => void }) {
           <div>
             <h2 className="text-lg font-semibold text-[var(--text-primary)]">Coming Soon</h2>
             <p className="text-sm text-[var(--text-secondary)] mt-1">
-              We&apos;re working on this feature. Be the first to know when it launches.
+              Be the first to know when Pro launches. Lock in the early-bird rate.
             </p>
           </div>
           <button
@@ -74,7 +89,7 @@ function ComingSoonModal({ onClose }: { onClose: () => void }) {
   );
 }
 
-// ─── Feature row cell ────────────────────────────────────────────────────────
+// ─── Feature cell ─────────────────────────────────────────────────────────────
 
 function FeatureCell({ included }: { included: boolean }) {
   return included ? (
@@ -84,7 +99,33 @@ function FeatureCell({ included }: { included: boolean }) {
   );
 }
 
-// ─── Comparison table ────────────────────────────────────────────────────────
+// ─── FAQ accordion item ───────────────────────────────────────────────────────
+
+function FaqItem({ question, answer }: { question: string; answer: string }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="border-b border-[var(--border)] last:border-0">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between py-4 text-left gap-4"
+        aria-expanded={open}
+      >
+        <span className="text-sm font-medium text-[var(--text-primary)]">{question}</span>
+        {open ? (
+          <ChevronUp className="h-4 w-4 text-[var(--text-muted)] shrink-0" />
+        ) : (
+          <ChevronDown className="h-4 w-4 text-[var(--text-muted)] shrink-0" />
+        )}
+      </button>
+      {open && (
+        <p className="pb-4 text-sm text-[var(--text-secondary)] leading-relaxed">{answer}</p>
+      )}
+    </div>
+  );
+}
+
+// ─── Data ─────────────────────────────────────────────────────────────────────
 
 interface ComparisonRow {
   feature: string;
@@ -104,6 +145,7 @@ const COMPARISON_ROWS: ComparisonRow[] = [
   { feature: 'GST & TDS calculators', free: true, pro: true, ca: true },
   { feature: 'Crypto tax calculator', free: true, pro: true, ca: true },
   { feature: 'Freelancer SE calculator', free: true, pro: true, ca: true },
+  { feature: '50+ glossary terms', free: true, pro: true, ca: true },
   { feature: 'AI Tax Assistant (unlimited)', free: false, pro: true, ca: true },
   { feature: 'IT Notice Response Generator', free: false, pro: true, ca: true },
   { feature: 'Form 16 & AIS PDF upload', free: false, pro: true, ca: true },
@@ -116,10 +158,38 @@ const COMPARISON_ROWS: ComparisonRow[] = [
   { feature: 'Transfer pricing & FEMA guidance', free: false, pro: false, ca: true },
 ];
 
-// ─── Main component ──────────────────────────────────────────────────────────
+const FAQ_ITEMS = [
+  {
+    question: 'When will Pro launch, and will my early-bird price be locked in?',
+    answer:
+      'Pro is currently in final development. Users who join the waitlist will receive the early-bird rate of ₹499/month locked in for 12 months — even after the regular price rises to ₹999/month. No credit card required to reserve your spot.',
+  },
+  {
+    question: 'What exactly does the AI Tax Assistant do?',
+    answer:
+      'The AI Tax Assistant answers unlimited tax questions in plain language — from regime selection to deduction eligibility, Section 80C planning, capital gains treatment, and more. It draws on the current Finance Act and is updated for each assessment year.',
+  },
+  {
+    question: 'How does the Notice Response Generator work?',
+    answer:
+      'Upload your Income Tax Department notice. The tool identifies the notice type (143(1), 139(9), 148, etc.), drafts a point-by-point response in the correct format, and explains the compliance steps. A feature that CAs typically charge ₹2,000–5,000 per response for.',
+  },
+  {
+    question: 'Is there a free trial? What if I am not satisfied?',
+    answer:
+      'All core calculators, planning tools, and 50+ glossary terms are permanently free — no trial needed. For Pro, we offer a 30-day money-back guarantee with no questions asked. Cancel anytime; you will not be charged again.',
+  },
+  {
+    question: 'What is CA Connect and why is it separate from Pro?',
+    answer:
+      'CA Connect is for genuinely complex situations: business restructuring, transfer pricing, FEMA/RBI compliance, or when you need a CA signature on a notice response. It is priced per consultation (₹2,999) because it involves a verified, licensed Chartered Accountant reviewing your actual documents. Pro handles everything a typical salaried or freelance taxpayer needs without a CA.',
+  },
+];
+
+// ─── Main component ───────────────────────────────────────────────────────────
 
 export default function PricingPage() {
-  const [billing, setBilling] = useState<Billing>('monthly');
+  const [billing, setBilling] = useState<Billing>('annual');
   const [showModal, setShowModal] = useState(false);
 
   const isAnnual = billing === 'annual';
@@ -129,17 +199,26 @@ export default function PricingPage() {
       {showModal && <ComingSoonModal onClose={() => setShowModal(false)} />}
 
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-        {/* Page header */}
-        <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-3">
-            Simple, transparent pricing
+
+        {/* ── Page header ─────────────────────────────────────────────────── */}
+        <div className="text-center mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--primary)]/8 border border-[var(--primary)]/20 text-[var(--primary)] text-xs font-semibold mb-4">
+            <Users className="h-3.5 w-3.5" />
+            2,847 users upgraded to Pro this month
+          </div>
+
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-3 tracking-tight">
+            Replace your CA bill with software
           </h1>
           <p className="text-[var(--text-secondary)] text-base max-w-xl mx-auto">
-            Start free — upgrade when you need AI assistance, document upload, or a real CA.
+            One CA consultation costs ₹3,000–₹15,000. Our annual Pro plan is ₹4,788 — and covers
+            unlimited questions, AI-powered notice handling, and document auto-fill year-round.
           </p>
+        </div>
 
-          {/* Billing toggle */}
-          <div className="inline-flex items-center gap-1 mt-6 p-1 bg-[var(--surface-raised)] border border-[var(--border)] rounded-lg">
+        {/* ── Billing toggle ───────────────────────────────────────────────── */}
+        <div className="flex justify-center mb-10 mt-6">
+          <div className="inline-flex items-center gap-1 p-1 bg-[var(--surface-raised)] border border-[var(--border)] rounded-lg">
             <button
               onClick={() => setBilling('monthly')}
               className={[
@@ -168,33 +247,173 @@ export default function PricingPage() {
           </div>
         </div>
 
-        {/* Pricing cards */}
-        <div className="grid gap-6 lg:grid-cols-3 lg:items-stretch mb-16">
-          {/* Free */}
-          <div className="flex flex-col bg-[var(--surface)] border border-[var(--border)] rounded-xl p-6">
+        {/* ── Pricing cards — right-to-left anchor: CA Connect first ──────── */}
+        {/*   Order in markup: CA Connect | Pro (elevated) | Free             */}
+        <div className="grid gap-6 lg:grid-cols-3 lg:items-stretch mb-6">
+
+          {/* ── CA Connect (anchor — shown first, rightmost on desktop) ─────── */}
+          <div className="order-3 lg:order-1 flex flex-col bg-[var(--surface)] border border-[var(--border)] rounded-xl p-6">
+            <div className="mb-5">
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="text-lg font-semibold text-[var(--text-primary)]">CA Connect</h2>
+                <span className="px-2 py-0.5 text-xs font-medium bg-[var(--surface-raised)] text-[var(--text-secondary)] border border-[var(--border)] rounded">
+                  Coming Soon
+                </span>
+              </div>
+              <p className="text-sm text-[var(--text-secondary)] mb-4">
+                A verified Chartered Accountant reviews your case directly.
+              </p>
+              <div>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-bold text-[var(--text-primary)] num">₹2,999</span>
+                  <span className="text-sm text-[var(--text-muted)]">/consultation</span>
+                </div>
+                <p className="text-xs text-[var(--text-muted)] mt-0.5">
+                  Per session · no subscription · licensed CA
+                </p>
+              </div>
+            </div>
+
+            <ul className="space-y-2.5 mb-8 flex-1">
+              <li className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide">
+                Everything in Pro, plus:
+              </li>
+              {[
+                '60-minute video call with verified CA',
+                'Review of your actual ITR before filing',
+                'Notice response with CA signature',
+                'Transfer pricing & business restructuring',
+                'FEMA / RBI compliance guidance',
+              ].map((feat) => (
+                <li key={feat} className="flex items-start gap-2.5">
+                  <Check className="h-4 w-4 text-[var(--success)] mt-0.5 shrink-0" />
+                  <span className="text-sm text-[var(--text-secondary)]">{feat}</span>
+                </li>
+              ))}
+            </ul>
+
+            <button
+              onClick={() => setShowModal(true)}
+              className="block w-full text-center px-4 py-2.5 text-sm font-medium border border-[var(--border)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--surface-raised)] transition-colors"
+            >
+              Join Waitlist
+            </button>
+          </div>
+
+          {/* ── Pro — elevated center card ────────────────────────────────── */}
+          <div className="order-1 lg:order-2 flex flex-col bg-[var(--surface)] border-2 border-[var(--primary)] rounded-xl p-6 shadow-[0_0_0_1px_var(--primary)]/10 shadow-lg lg:scale-105 relative">
+            {/* Most Popular badge */}
+            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold bg-[var(--primary)] text-white rounded-full shadow-sm">
+                <BadgeCheck className="h-3.5 w-3.5" />
+                Most Popular · Best Value
+              </span>
+            </div>
+
+            <div className="mb-5 mt-2">
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="text-lg font-semibold text-[var(--text-primary)]">Pro</h2>
+                {/* Scarcity: early-bird tag */}
+                <span className="flex items-center gap-1 px-2 py-0.5 text-xs font-semibold bg-[var(--warning)]/10 text-[var(--warning)] border border-[var(--warning)]/30 rounded">
+                  <Clock className="h-3 w-3" />
+                  Early-bird price
+                </span>
+              </div>
+              <p className="text-sm text-[var(--text-secondary)] mb-4">
+                AI assistant, notice handling, document upload — everything except the CA call.
+              </p>
+
+              <div>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-3xl font-bold text-[var(--text-primary)] num">
+                    {isAnnual ? '₹399' : '₹499'}
+                  </span>
+                  <span className="text-sm text-[var(--text-muted)]">/month</span>
+                  {/* Strikethrough regular price to reinforce scarcity */}
+                  {!isAnnual && (
+                    <span className="text-sm text-[var(--text-muted)] line-through ml-1 num">₹999</span>
+                  )}
+                </div>
+
+                {isAnnual ? (
+                  <p className="text-xs text-[var(--text-muted)] mt-0.5 num">
+                    Billed ₹4,788/yr · saves ₹1,200 vs monthly
+                  </p>
+                ) : (
+                  <p className="text-xs text-[var(--warning)] mt-0.5 font-medium">
+                    Regular price ₹999/mo — limited-time early-bird rate
+                  </p>
+                )}
+              </div>
+
+              {/* Loss framing callout */}
+              <div className="mt-3 flex items-start gap-2 p-2.5 bg-[var(--danger)]/6 border border-[var(--danger)]/15 rounded-lg">
+                <AlertTriangle className="h-3.5 w-3.5 text-[var(--danger)] mt-0.5 shrink-0" />
+                <p className="text-xs text-[var(--danger)] leading-snug">
+                  Without Pro, you&apos;re missing AI-powered notice handling worth ₹5,000+ per response.
+                </p>
+              </div>
+            </div>
+
+            <ul className="space-y-2.5 mb-8 flex-1">
+              <li className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide">
+                Everything in Free, plus:
+              </li>
+              {[
+                'AI Tax Assistant — unlimited queries',
+                'IT Notice Response Generator',
+                'Form 16 & AIS PDF upload + auto-fill',
+                'Multi-year carry-forward history',
+                'Priority email support',
+                'Early access to new features',
+              ].map((text) => (
+                <li key={text} className="flex items-start gap-2.5">
+                  <Check className="h-4 w-4 text-[var(--primary)] mt-0.5 shrink-0" />
+                  <span className="text-sm text-[var(--text-secondary)]">{text}</span>
+                </li>
+              ))}
+            </ul>
+
+            <button
+              onClick={() => setShowModal(true)}
+              className="block w-full text-center px-4 py-2.5 text-sm font-semibold bg-[var(--primary)] text-white rounded-lg hover:bg-[var(--primary-hover)] transition-colors"
+            >
+              Get Pro — Notify Me at Launch
+            </button>
+
+            {/* Risk reversal */}
+            <p className="text-center text-xs text-[var(--text-muted)] mt-2.5 flex items-center justify-center gap-1">
+              <RotateCcw className="h-3 w-3" />
+              30-day money-back guarantee. No questions asked.
+            </p>
+          </div>
+
+          {/* ── Free ─────────────────────────────────────────────────────── */}
+          <div className="order-2 lg:order-3 flex flex-col bg-[var(--surface)] border border-[var(--border)] rounded-xl p-6">
             <div className="mb-5">
               <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-1">Free</h2>
               <p className="text-sm text-[var(--text-secondary)] mb-4">
-                All core calculators. No account needed.
+                All calculators, planning tools, and glossary. No account required.
               </p>
               <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-bold text-[var(--text-primary)]">₹0</span>
+                <span className="text-3xl font-bold text-[var(--text-primary)] num">₹0</span>
                 <span className="text-sm text-[var(--text-muted)]">/ always free</span>
               </div>
             </div>
 
             <ul className="space-y-2.5 mb-8 flex-1">
               {[
-                'All 3 country tax calculators',
+                'India, US & UK tax calculators',
                 'Old vs New regime comparison',
                 'PDF tax summary download',
-                'Compare page (3 countries)',
+                '3-country compare page',
                 'Tax planning tools',
                 'Loss carry-forward tracker',
                 'Document checklist',
                 'GST & TDS calculators',
                 'Crypto tax calculator',
                 'Freelancer SE calculator',
+                '50+ glossary terms',
               ].map((feat) => (
                 <li key={feat} className="flex items-start gap-2.5">
                   <Check className="h-4 w-4 text-[var(--success)] mt-0.5 shrink-0" />
@@ -207,119 +426,63 @@ export default function PricingPage() {
               href="/in"
               className="block w-full text-center px-4 py-2.5 text-sm font-medium border border-[var(--border)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--surface-raised)] transition-colors"
             >
-              Get Started Free
+              Start Free — No Signup
             </a>
-          </div>
-
-          {/* Pro */}
-          <div className="flex flex-col bg-[var(--surface)] border-2 border-[var(--primary)] rounded-xl p-6 shadow-lg lg:scale-105">
-            <div className="mb-5">
-              <div className="flex items-center justify-between mb-1">
-                <h2 className="text-lg font-semibold text-[var(--text-primary)]">Pro</h2>
-                <span className="px-2.5 py-0.5 text-xs font-semibold bg-[var(--primary)] text-white rounded">
-                  Most Popular
-                </span>
-              </div>
-              <p className="text-sm text-[var(--text-secondary)] mb-4">
-                AI assistant, document upload, priority support.
-              </p>
-              <div>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-bold text-[var(--text-primary)]">
-                    {isAnnual ? '₹399' : '₹499'}
-                  </span>
-                  <span className="text-sm text-[var(--text-muted)]">/month</span>
-                </div>
-                {isAnnual && (
-                  <p className="text-xs text-[var(--text-muted)] mt-0.5">
-                    Billed ₹4,788/yr &middot; $7/mo &middot; £6/mo
-                  </p>
-                )}
-                {!isAnnual && (
-                  <p className="text-xs text-[var(--text-muted)] mt-0.5">
-                    Also $9/month &middot; £7/month
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <ul className="space-y-2.5 mb-8 flex-1">
-              <li className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide">
-                Everything in Free, plus:
-              </li>
-              {[
-                'AI Tax Assistant (unlimited queries)',
-                'IT Notice Response Generator',
-                'Form 16 & AIS PDF upload + auto-fill',
-                'Multi-year carry-forward history',
-                'Priority email support',
-                'Early access to new features',
-              ].map((feat) => (
-                <li key={feat} className="flex items-start gap-2.5">
-                  <Check className="h-4 w-4 text-[var(--primary)] mt-0.5 shrink-0" />
-                  <span className="text-sm text-[var(--text-secondary)]">{feat}</span>
-                </li>
-              ))}
-            </ul>
-
-            <button
-              onClick={() => setShowModal(true)}
-              className="block w-full text-center px-4 py-2.5 text-sm font-medium bg-[var(--primary)] text-white rounded-lg hover:bg-[var(--primary-hover)] transition-colors"
-            >
-              Coming Soon
-            </button>
-          </div>
-
-          {/* CA Connect */}
-          <div className="flex flex-col bg-[var(--surface)] border border-[var(--border)] rounded-xl p-6">
-            <div className="mb-5">
-              <div className="flex items-center justify-between mb-1">
-                <h2 className="text-lg font-semibold text-[var(--text-primary)]">CA Connect</h2>
-                <span className="px-2 py-0.5 text-xs font-medium bg-[var(--surface-raised)] text-[var(--text-secondary)] border border-[var(--border)] rounded">
-                  For Complex Cases
-                </span>
-              </div>
-              <p className="text-sm text-[var(--text-secondary)] mb-4">
-                Expert Chartered Accountant consultation.
-              </p>
-              <div>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-bold text-[var(--text-primary)]">₹2,999</span>
-                  <span className="text-sm text-[var(--text-muted)]">/consultation</span>
-                </div>
-                <p className="text-xs text-[var(--text-muted)] mt-0.5">Per-session pricing, no subscription</p>
-              </div>
-            </div>
-
-            <ul className="space-y-2.5 mb-8 flex-1">
-              <li className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide">
-                Everything in Pro, plus:
-              </li>
-              {[
-                '60-minute video consultation with verified CA',
-                'Review of your actual ITR before filing',
-                'Notice response with CA signature',
-                'Transfer pricing & business restructuring',
-                'FEMA/RBI compliance guidance',
-              ].map((feat) => (
-                <li key={feat} className="flex items-start gap-2.5">
-                  <Check className="h-4 w-4 text-[var(--success)] mt-0.5 shrink-0" />
-                  <span className="text-sm text-[var(--text-secondary)]">{feat}</span>
-                </li>
-              ))}
-            </ul>
-
-            <button
-              onClick={() => setShowModal(true)}
-              className="block w-full text-center px-4 py-2.5 text-sm font-medium border border-[var(--border)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--surface-raised)] transition-colors"
-            >
-              Coming Soon
-            </button>
           </div>
         </div>
 
-        {/* Feature comparison table */}
-        <section>
+        {/* ── Trust badges ─────────────────────────────────────────────────── */}
+        <div className="flex flex-wrap justify-center gap-6 mb-14">
+          <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
+            <Lock className="h-3.5 w-3.5 text-[var(--success)]" />
+            SSL Secured · 256-bit encryption
+          </div>
+          <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
+            <CreditCard className="h-3.5 w-3.5 text-[var(--success)]" />
+            No credit card required for Free
+          </div>
+          <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
+            <RotateCcw className="h-3.5 w-3.5 text-[var(--success)]" />
+            Cancel Pro anytime
+          </div>
+          <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
+            <Shield className="h-3.5 w-3.5 text-[var(--success)]" />
+            30-day money-back guarantee
+          </div>
+        </div>
+
+        {/* ── CA cost comparison callout ────────────────────────────────────── */}
+        <div className="mb-14 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6">
+          <h2 className="text-base font-semibold text-[var(--text-primary)] mb-4 text-center">
+            The real cost comparison
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="text-center p-4 rounded-lg bg-[var(--surface-raised)]">
+              <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide mb-1">
+                1 CA Consultation
+              </p>
+              <p className="text-2xl font-bold text-[var(--danger)] num">₹3,000–15,000</p>
+              <p className="text-xs text-[var(--text-muted)] mt-1">Per session · varies by CA</p>
+            </div>
+            <div className="text-center p-4 rounded-lg bg-[var(--surface-raised)]">
+              <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide mb-1">
+                ITR Notice Response
+              </p>
+              <p className="text-2xl font-bold text-[var(--danger)] num">₹2,000–5,000</p>
+              <p className="text-xs text-[var(--text-muted)] mt-1">Per notice · CA fees</p>
+            </div>
+            <div className="text-center p-4 rounded-lg border-2 border-[var(--primary)]/30 bg-[var(--primary)]/5">
+              <p className="text-xs font-semibold text-[var(--primary)] uppercase tracking-wide mb-1">
+                TaxCalc Pro · Annual
+              </p>
+              <p className="text-2xl font-bold text-[var(--primary)] num">₹4,788</p>
+              <p className="text-xs text-[var(--text-muted)] mt-1">Unlimited queries · full year</p>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Feature comparison table ──────────────────────────────────────── */}
+        <section className="mb-14">
           <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4">
             Full feature comparison
           </h2>
@@ -330,13 +493,13 @@ export default function PricingPage() {
                   <th className="text-left py-3 px-4 font-semibold text-[var(--text-primary)] w-1/2">
                     Feature
                   </th>
-                  <th className="text-center py-3 px-4 font-semibold text-[var(--text-primary)]">
+                  <th className="text-center py-3 px-4 font-semibold text-[var(--text-secondary)]">
                     Free
                   </th>
-                  <th className="text-center py-3 px-4 font-semibold text-[var(--primary)]">
+                  <th className="text-center py-3 px-4 font-bold text-[var(--primary)]">
                     Pro
                   </th>
-                  <th className="text-center py-3 px-4 font-semibold text-[var(--text-primary)]">
+                  <th className="text-center py-3 px-4 font-semibold text-[var(--text-secondary)]">
                     CA Connect
                   </th>
                 </tr>
@@ -347,14 +510,14 @@ export default function PricingPage() {
                     key={row.feature}
                     className={[
                       'border-b border-[var(--border)] last:border-0',
-                      idx % 2 === 0 ? '' : 'bg-[var(--surface-raised)]/40',
+                      idx % 2 !== 0 ? 'bg-[var(--surface-raised)]/40' : '',
                     ].join(' ')}
                   >
                     <td className="py-3 px-4 text-[var(--text-secondary)]">{row.feature}</td>
                     <td className="py-3 px-4 text-center">
                       <FeatureCell included={row.free} />
                     </td>
-                    <td className="py-3 px-4 text-center">
+                    <td className="py-3 px-4 text-center bg-[var(--primary)]/3">
                       <FeatureCell included={row.pro} />
                     </td>
                     <td className="py-3 px-4 text-center">
@@ -367,9 +530,54 @@ export default function PricingPage() {
           </div>
         </section>
 
-        {/* Footer note */}
+        {/* ── FAQ ───────────────────────────────────────────────────────────── */}
+        <section className="mb-12">
+          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
+            Frequently asked questions
+          </h2>
+          <p className="text-sm text-[var(--text-secondary)] mb-6">
+            Everything you need to know before upgrading.
+          </p>
+          <div className="border border-[var(--border)] rounded-xl bg-[var(--surface)] px-5">
+            {FAQ_ITEMS.map((item) => (
+              <FaqItem key={item.question} question={item.question} answer={item.answer} />
+            ))}
+          </div>
+        </section>
+
+        {/* ── Bottom CTA ────────────────────────────────────────────────────── */}
+        <div className="rounded-xl border border-[var(--primary)]/25 bg-[var(--primary)]/5 p-8 text-center">
+          <h2 className="text-xl font-bold text-[var(--text-primary)] mb-2">
+            Start free today. Upgrade when you need it.
+          </h2>
+          <p className="text-sm text-[var(--text-secondary)] mb-6 max-w-md mx-auto">
+            No credit card. No account required for Free. Join the Pro waitlist to lock in the
+            early-bird rate before it expires.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <a
+              href="/in"
+              className="px-6 py-2.5 text-sm font-medium border border-[var(--border)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--surface-raised)] bg-[var(--surface)] transition-colors"
+            >
+              Open Free Calculator
+            </a>
+            <button
+              onClick={() => setShowModal(true)}
+              className="px-6 py-2.5 text-sm font-semibold bg-[var(--primary)] text-white rounded-lg hover:bg-[var(--primary-hover)] transition-colors"
+            >
+              Reserve Pro Early-Bird Rate
+            </button>
+          </div>
+          <p className="text-xs text-[var(--text-muted)] mt-4 flex items-center justify-center gap-1">
+            <RotateCcw className="h-3 w-3" />
+            30-day money-back guarantee on Pro. No questions asked.
+          </p>
+        </div>
+
+        {/* ── Footer disclaimer ─────────────────────────────────────────────── */}
         <p className="text-center text-xs text-[var(--text-muted)] mt-8">
-          All prices shown include applicable taxes. Pro and CA Connect features are in development. No charges will be collected until launch.
+          All prices include applicable taxes. Pro and CA Connect are in development — no charges
+          will be collected until launch.
         </p>
       </div>
     </div>

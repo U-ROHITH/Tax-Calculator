@@ -1,19 +1,18 @@
-import Anthropic from '@anthropic-ai/sdk';
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 import { NextRequest, NextResponse } from 'next/server';
 
-// ---------- Environment guard (lazy — checked at request time, not build time) ----------
-function getClient(): Anthropic {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) throw new Error('ANTHROPIC_API_KEY environment variable is not set');
-  return new Anthropic({ apiKey });
+// ---------- Environment guard ----------
+function getClient(): GoogleGenerativeAI {
+  const apiKey = process.env.GOOGLE_AI_API_KEY;
+  if (!apiKey) throw new Error('GOOGLE_AI_API_KEY environment variable is not set');
+  return new GoogleGenerativeAI(apiKey);
 }
 
 // ---------- Constants ----------
-const MAX_MESSAGES = 20;          // max conversation turns passed from client
-const MAX_MESSAGE_LENGTH = 4000;  // max chars per single message content string
+const MAX_MESSAGES = 20;
+const MAX_MESSAGE_LENGTH = 4000;
 const ALLOWED_ROLES = new Set(['user', 'assistant']);
 const ALLOWED_COUNTRIES = new Set(['IN', 'US', 'UK', '']);
-const MAX_TOKENS = 1024;          // hard ceiling — never exceed this
 
 const SYSTEM_PROMPT = `You are a senior Chartered Accountant and tax consultant with expertise in Indian Income Tax, US Federal/State Tax, and UK Self Assessment. You have 20 years of experience.
 
@@ -28,25 +27,19 @@ Rules:
 - End every response with: "This is informational only. Consult a qualified CA/CPA/tax advisor before making decisions."
 - Be concise but complete. Typical response: 150-300 words.`;
 
-// ---------- In-memory rate limiter (per IP, resets on cold start) ----------
-// For production, replace with Redis / Upstash.
+// ---------- In-memory rate limiter ----------
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
-const RATE_LIMIT_MAX = 15;           // requests per window per IP
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX = 15;
 
 function isRateLimited(ip: string): boolean {
   const now = Date.now();
   const entry = rateLimitMap.get(ip);
-
   if (!entry || now > entry.resetAt) {
     rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
     return false;
   }
-
-  if (entry.count >= RATE_LIMIT_MAX) {
-    return true;
-  }
-
+  if (entry.count >= RATE_LIMIT_MAX) return true;
   entry.count += 1;
   return false;
 }
@@ -57,44 +50,43 @@ interface MessageShape {
   content: string;
 }
 
-function validateMessages(raw: unknown): Anthropic.MessageParam[] {
-  if (!Array.isArray(raw)) {
-    throw new TypeError('messages must be an array');
-  }
-  if (raw.length === 0) {
-    throw new TypeError('messages array must not be empty');
-  }
-  if (raw.length > MAX_MESSAGES) {
+interface GeminiMessage {
+  role: 'user' | 'model';
+  parts: Array<{ text: string }>;
+}
+
+function validateMessages(raw: unknown): GeminiMessage[] {
+  if (!Array.isArray(raw)) throw new TypeError('messages must be an array');
+  if (raw.length === 0) throw new TypeError('messages array must not be empty');
+  if (raw.length > MAX_MESSAGES)
     throw new RangeError(`messages array exceeds maximum length of ${MAX_MESSAGES}`);
-  }
 
-  return raw.map((item: unknown, index: number): Anthropic.MessageParam => {
-    if (typeof item !== 'object' || item === null) {
+  return raw.map((item: unknown, index: number): GeminiMessage => {
+    if (typeof item !== 'object' || item === null)
       throw new TypeError(`messages[${index}] must be an object`);
-    }
-    const msg = item as MessageShape;
 
-    if (!ALLOWED_ROLES.has(msg.role)) {
+    const msg = item as MessageShape;
+    if (!ALLOWED_ROLES.has(msg.role))
       throw new TypeError(
         `messages[${index}].role must be "user" or "assistant", got "${msg.role}"`
       );
-    }
-    if (typeof msg.content !== 'string') {
+    if (typeof msg.content !== 'string')
       throw new TypeError(`messages[${index}].content must be a string`);
-    }
-    if (msg.content.length > MAX_MESSAGE_LENGTH) {
+    if (msg.content.length > MAX_MESSAGE_LENGTH)
       throw new RangeError(
         `messages[${index}].content exceeds maximum length of ${MAX_MESSAGE_LENGTH} characters`
       );
-    }
 
-    return { role: msg.role as 'user' | 'assistant', content: msg.content };
+    // Gemini uses 'model' instead of 'assistant'
+    return {
+      role: msg.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: msg.content }],
+    };
   });
 }
 
 // ---------- Route handler ----------
 export async function POST(req: NextRequest) {
-  // Rate limiting
   const ip =
     req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
     req.headers.get('x-real-ip') ??
@@ -107,7 +99,6 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Parse body
   let body: unknown;
   try {
     body = await req.json();
@@ -121,7 +112,6 @@ export async function POST(req: NextRequest) {
 
   const { messages: rawMessages, country: rawCountry } = body as Record<string, unknown>;
 
-  // Validate country
   const country = typeof rawCountry === 'string' ? rawCountry : '';
   if (!ALLOWED_COUNTRIES.has(country)) {
     return NextResponse.json(
@@ -130,8 +120,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Validate messages
-  let messages: Anthropic.MessageParam[];
+  let messages: GeminiMessage[];
   try {
     messages = validateMessages(rawMessages);
   } catch (err) {
@@ -141,7 +130,6 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Enforce last message is from user
   if (messages[messages.length - 1].role !== 'user') {
     return NextResponse.json(
       { error: 'The last message must have role "user"' },
@@ -158,24 +146,37 @@ export async function POST(req: NextRequest) {
       ? 'Focus on UK tax law and HMRC guidance.'
       : 'Cover India, US, and UK tax law as relevant.';
 
-  // Call Anthropic and stream response
+  // Separate history from the latest user message
+  const history = messages.slice(0, -1);
+  const lastMessage = messages[messages.length - 1].parts[0].text;
+
   try {
-    const stream = await getClient().messages.stream({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: MAX_TOKENS,
-      system: SYSTEM_PROMPT + '\n\n' + countryContext,
-      messages,
+    const genAI = getClient();
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-1.5-flash',
+      systemInstruction: SYSTEM_PROMPT + '\n\n' + countryContext,
+      safetySettings: [
+        {
+          category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+          threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+        },
+        {
+          category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+          threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+        },
+      ],
     });
+
+    const chat = model.startChat({ history });
+    const result = await chat.sendMessageStream(lastMessage);
 
     const readable = new ReadableStream({
       async start(controller) {
         try {
-          for await (const chunk of stream) {
-            if (
-              chunk.type === 'content_block_delta' &&
-              chunk.delta.type === 'text_delta'
-            ) {
-              controller.enqueue(new TextEncoder().encode(chunk.delta.text));
+          for await (const chunk of result.stream) {
+            const text = chunk.text();
+            if (text) {
+              controller.enqueue(new TextEncoder().encode(text));
             }
           }
           controller.close();
@@ -189,15 +190,15 @@ export async function POST(req: NextRequest) {
       headers: { 'Content-Type': 'text/plain; charset=utf-8' },
     });
   } catch (err: unknown) {
-    // Log internally but never expose SDK/key details to the client
-    console.error('[tax-assistant] Anthropic API error:', err);
+    console.error('[tax-assistant] Google AI error:', err);
 
-    const status =
-      err instanceof Anthropic.APIError && err.status === 429 ? 429 : 500;
     const message =
-      status === 429
+      err instanceof Error && err.message.includes('429')
         ? 'AI service is currently overloaded. Please try again shortly.'
         : 'An error occurred while processing your request.';
+
+    const status =
+      err instanceof Error && err.message.includes('429') ? 429 : 500;
 
     return NextResponse.json({ error: message }, { status });
   }
