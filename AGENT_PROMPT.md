@@ -697,6 +697,13 @@ Build + push.
 
 ---
 
+### ✅ M39 — DONE — Marginal Rate Explainer, AY Selector, Bracket Visualization **Pushed ✓**
+- Part A: Collapsible "Marginal Rate Analysis" section in ResultsDashboard with horizontal bracket bar (color segments green→red), income position marker, and breakeven table (old/new regime slabs)
+- Part B: Assessment Year selector (AY 2025-26 / AY 2026-27) at top of IndiaForm with prior-year note for AY 2025-26 slabs
+- Part C: Effective vs Marginal rate info card with 30%+ bracket warning embedded in analysis section
+
+---
+
 ## Commit Convention
 
 ```
