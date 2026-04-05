@@ -891,7 +891,7 @@ If component missing or incomplete, rebuild it.
 - Add `robots.txt` if missing
 - Check for any `console.log` statements left in production code
 
-### 🔲 M60 — Add 6 more blog articles (SEO expansion)
+### ✅ M60 — DONE — 12 additional blog articles added Pushed ✓
 New articles needed (add to `lib/blog-data.ts`):
 1. "NRI Tax Guide India 2025-26 — What's Taxable, DTAA, TDS Rates"
 2. "How to Save Tax with NPS — Section 80CCD(1B) Extra ₹50,000 Deduction"
